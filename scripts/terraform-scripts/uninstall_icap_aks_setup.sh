@@ -15,5 +15,8 @@ az storage account delete -n $STORAGE_ACCOUNT_NAME -g $RESOURCE_GROUP_NAME
 #deletes resource
 az group delete -n $RESOURCE_GROUP_NAME
 
+#Hard delete keyvault
+az keyvault purge --name $VAULT_NAME
+
 #deletes service priniple
 az ad sp delete --id $appID
