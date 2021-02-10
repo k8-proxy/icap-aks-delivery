@@ -39,6 +39,7 @@
 - Helm
 - Openssl
 - Microsoft account
+- Dockerhub account
 - Azure CLI - with permissions to create resources and service principle within your chosen subscription
 - Bash terminal or terminal able to execute bash scripts
 - JSON processor (jq)
@@ -205,26 +206,7 @@ az account list --output table
 az account set -s <subscription ID>
 
 ```
-
-### 2.3 Create azure initial setup
-
-- Give any meaningfull vaule to below variables and run it in terminal
-```
-    export LOCATION=uksouth
-    export RESOURCE_GROUP_NAME=gw-icap-tfstate
-    export STORAGE_ACCOUNT_NAME=tfstate263
-    export CONTAINER_NAME=gw-icap-tfstate
-    export TAGS='createdby='
-    export VAULT_NAME=gw-tfstate-Vault
-
-```
-- Run below script
-
-```     
-./scripts/terraform-scripts/create_azure_setup.sh
-```
-
-### 2.4 Create terraform service principle
+### 2.3 Create terraform service principle
 
 **PLEASE NOTE THIS ONLY NEEDS TO BE DONE ONCE FOR A SINGLE SUBSCRIPTION**
 
@@ -252,53 +234,38 @@ client_secret   = "xyz"
 tenant_id       = "xyz"
 
 ```
+### 2.4. Add required credentails
 
-- Run 
+- All the required secrets and variables are listed in  are ".env.example"
 
-```
-export appId=<APP ID>
-```
-
-### 2.5 Add Secrets to main KeyVault
-
-- Get value for below variables
+- Run below
 
 ```
-token-username       =    "policy-management"
-spusername           =    < client id >
-sppassword           =    < client secret >
-TF-VAR-client-id     =    < client id >
-TF-VAR-client-secret =    < client secret >
-DH-SA-USERNAME       =    < dockerhub username >
-DH-SA-PASSWORD       =    < dockerhub password  >
-SmtpUser             =    < smtup user >
-SmtpPass             =    < smtp pass >
-manage-endpoint      =
+cp .env.example .env
+vim .env
 ```
-- Run below commands with proper values to save secrets in keyVault
+
+- Edit all the required details. 
+- Run
+```
+export $(xargs<.env)
+```
+### 2.5 Create azure initial setup
+
+- Run below script
+
+```     
+./scripts/terraform-scripts/create_azure_setup.sh
+
+```
+
+### 2.5 Add Secrets to main KeyVault 
+
+- Run below scrip once you have done step 2.4
 ( You can also do this in Azure portal.Login to azure account and search <KEY_VAULT_NAME>,Go to secrets and add the above secrets. )
 
 ```
-az keyvault secret set --vault-name $VAULT_NAME  --name "token-username" --value <token-username>
-
-az keyvault secret set --vault-name $VAULT_NAME --name spusername --value <CLIENT_ID>
-
-az keyvault secret set --vault-name $VAULT_NAME --name sppassword --value <CLIENT_SECRET>
-
-az keyvault secret set --vault-name $VAULT_NAME --name "TF-VAR-client-id" --value <CLIENT_ID>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name "TF-VAR-client-secret" --value <CLIENT_SECRET>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-USERNAME--value <dockerhub username>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-PASSWORD --value <dockerhub password>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name SmtpUser --value <smtup user>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name SmtpPass --value <smtp pass>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name manage-endpoint --value <manage-endpoint>
-
+./scripts/terraform-scripts/load_keyvault_secrets.sh
 ```
 
 ### 2.6 Add Terraform Backend Key to Environment
@@ -371,6 +338,32 @@ UKW_RESOURCE_GROUP -  resource_group of aks
 UKW_CONTEXT - cluster_name of aks
 ```
 
+### 2.8 Creating SSL Certs
+
+
+```bash
+
+mkdir -p certs/icap-cert
+
+mkdir -p certs/mgmt-cert
+```
+
+#### Self signed quick start
+- Firstly you will need to create a ```certs/``` folder:
+
+
+- Now the directories for the certs have been created, you can now create the certs using the following scripts:
+
+```bash
+./scripts/gen-certs/icap-cert/icap-gen-certs.sh icap-client.ukwest.cloudapp.azure.com
+```
+
+- Management-UI
+```bash
+./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh management-ui.ukwest.cloudapp.azure.com
+```
+#### Customer Certificates
+
 ## 3. Deployment
 ### 3.1 Setup and Initialise Terraform
 
@@ -413,34 +406,12 @@ Enter "yes"
 ./scripts/az-secret-script/create-az-secret.sh
 ```
 
-### 3.4 Creating SSL Certs
-
-- Firstly you will need to create a ```certs/``` folder:
-
-```bash
-mkdir certs/ 
-
-mkdir certs/icap-cert
-
-mkdir certs/mgmt-cert
-```
-
-- Now the directories for the certs have been created, you can now create the certs using the following scripts:
-
-```bash
-./scripts/gen-certs/icap-cert/icap-gen-certs.sh icap-client.ukwest.cloudapp.azure.com
-```
-
-- Management-UI
-```bash
-./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh management-ui.ukwest.cloudapp.azure.com
-```
-### 3.5 Create Namespaces & Secrets.
+### 3.4 Create Namespaces & Secrets.
 ```
 ./scripts/k8s_scripts/create-ns-docker-secret-uks.sh
 
 ```
-### 3.6 Guide to Setup ArgoCD
+### 3.5 Guide to Setup ArgoCD
 
 Next we will deploy the services using either Helm or Argocd. Both of the Readme's for each can be found below:
 
@@ -448,7 +419,7 @@ Next we will deploy the services using either Helm or Argocd. Both of the Readme
 - [ArgoCD deployment guide Readme](/argocd/deployment-guide/README.md)
 - [ArgoCD user guide Readme](/argocd/user-guide/README.md)
 
-### 3.7 Deploy Using ArgoCD
+### 3.6 Deploy Using ArgoCD
 
 - Before deploying confirm you are on the right context (server)
 ```
