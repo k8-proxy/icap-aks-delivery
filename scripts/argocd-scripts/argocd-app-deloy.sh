@@ -11,7 +11,7 @@ UKW_RESOURCE_GROUP="gw-icap-aks-"${TF_VAR_suffix}
 UKW_CLUSTER_FQDN=$(az aks list -g $UKW_RESOURCE_GROUP --query "[].fqdn" | awk 'FNR == 2' | tr -d '",\040')
 
 # Cluster Context
-UKW_CONTEXT="gw-icap-aks-"${TF_VAR_suffix}"-ukw"s
+UKW_CONTEXT="gw-icap-aks-"${TF_VAR_suffix}"-ukw"
 
 # App Name
 ADAPTATION_SERVICE="icap-adaptation-service"
