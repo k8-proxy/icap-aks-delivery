@@ -211,7 +211,7 @@ sudo apt-get install jq
 | STORAGE_ACCOUNT_NAME | Storage account name for initial azure setup | `string` | n/a | yes |
 | CONTAINER_NAME | Container Name for initial azure setup | `number` | n/a | yes |
 | VAULT_NAME | Vault Name for initial azure setup | `string` | n/a | yes |
-| key | state key name for terraform | `string`` | n/a | yes |
+| key | state key name for terraform | `string` | n/a | yes |
 
 ## 2. Usage
 
