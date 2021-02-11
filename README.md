@@ -14,7 +14,6 @@ Deployment for I-CAP Azure resources and AKS Deployment using Terraform
     - [Get contexts for the clusters](#get-contexts-for-the-clusters)
     - [Creating SSL Certs](#creating-ssl-certs)
     - [Create Namespaces & Secrets](#create-namespaces--secrets)
-    - [Install ArgoCD & Deploy Apps using ArgoCD](#install-argocd--deploy-apps-using-argocd)
 
 ## Pre-requisites 
 
@@ -138,13 +137,3 @@ All this requires is to make sure the variables at the top of the script matches
 ```bash
 ./scripts/k8_scripts/create-ns-docker-secret-ukw.sh
 ```
-
-### Install ArgoCD & Deploy Apps using ArgoCD
-
-Next we will deploy the services using either Helm or Argocd. Both of the Readme's for each can be found below:
-
-- [ArgoCD Installation guide Readme](/argocd/installation-guide/README.md)
-- [ArgoCD deployment guide Readme](/argocd/deployment-guide/README.md)
-- [ArgoCD user guide Readme](/argocd/user-guide/README.md)
-
-***All commands need to be run from the root directory for the paths to be correct***
