@@ -50,7 +50,7 @@ resource "azurerm_kubernetes_cluster" "icap-deploy" {
   }
 }
 
-# Deploy Rabbitmw-Operator helm chart
+# Deploy Rabbitmq-Operator helm chart
 resource "helm_release" "rabbitmq-operator" {
   name             = var.release_name05
   namespace        = var.namespace05
@@ -72,9 +72,7 @@ resource "helm_release" "rabbitmq-operator" {
 # Deploy Cert-Manager helm chart
 resource "helm_release" "cert-manager" {
   name             = var.release_name02
-  namespace        = var.namespace02
   chart            = var.chart_repo02
-  create_namespace = true
   wait             = false
   cleanup_on_fail  = true
 
@@ -123,6 +121,8 @@ resource "helm_release" "administration" {
 
   depends_on = [ 
     azurerm_kubernetes_cluster.icap-deploy,
+    helm_release.cert-manager,
+    null_resource.load_k8_secrets,
    ]
 }
 
@@ -147,10 +147,11 @@ resource "helm_release" "adaptation" {
 
   depends_on = [ 
     azurerm_kubernetes_cluster.icap-deploy,
+    helm_release.rabbitmq-operator,
    ]
 }
 
-# Deploy Adaptation helm chart
+# Deploy NCFS helm chart
 resource "helm_release" "ncfs" {
   name             = var.release_name06
   namespace        = var.namespace06
@@ -167,4 +168,28 @@ resource "helm_release" "ncfs" {
   depends_on = [ 
     azurerm_kubernetes_cluster.icap-deploy,
    ]
+}
+
+resource "null_resource" "get_kube_context" {
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
+  }
+  
+  depends_on = [
+    azurerm_kubernetes_cluster.icap-deploy,
+  ]
+}
+
+resource "null_resource" "load_k8_secrets" {
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash ./scripts/k8s_scripts/create-ns-docker-secret-ukw.sh"
+  }
+
+  depends_on = [
+    null_resource.get_kube_context,
+  ]
 }

@@ -34,15 +34,15 @@ echo "Creating CSR"
 (cd ./certs/icap-cert; openssl req -newkey rsa:2048 -nodes -keyout $key_name.key -x509 -days 365 -out $crt_name.crt  \
     -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email")
 
-echo "---------------------------"
-echo "-----Below is your crt-----"
-echo "---------------------------"
-echo
-(cd ./certs/icap-cert; cat $crt_name.crt)
+# echo "---------------------------"
+# echo "-----Below is your crt-----"
+# echo "---------------------------"
+# echo
+# (cd ./certs/icap-cert; cat $crt_name.crt)
 
-echo
-echo "---------------------------"
-echo "-----Below is your Key-----"
-echo "---------------------------"
-echo
-(cd ./certs/icap-cert; cat $key_name.key)
+# echo
+# echo "---------------------------"
+# echo "-----Below is your Key-----"
+# echo "---------------------------"
+# echo
+# (cd ./certs/icap-cert; cat $key_name.key)

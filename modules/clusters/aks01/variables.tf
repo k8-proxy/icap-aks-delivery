@@ -76,7 +76,7 @@ variable "namespace02" {
 variable "chart_repo02" {
   description = "This is the path to the chart"
   type        = string
-  default 	  = "jetstack/cert-manager"
+  default 	  = "./charts/icap-infrastructure/cert-manager-chart"
 }
 
 ## Nginx Chart
