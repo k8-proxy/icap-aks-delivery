@@ -3,13 +3,6 @@
 # We cannot create this storage account and blob container using Terraform itself since
 # we are creating the remote state storage for Terraform and Terraform needs this storage in terraform init phase.
 
-LOCATION=<Location>
-RESOURCE_GROUP_NAME=<RG Name>
-STORAGE_ACCOUNT_NAME=<Storage Name>$RANDOM
-CONTAINER_NAME=<Container name>
-TAGS='createdby='
-LOCATION=“westeurope”
-VAULT_NAME=“<vault-name>”
 
 # Create resource group
 az group create --name $RESOURCE_GROUP_NAME --location $LOCATION --tags $TAGS
@@ -27,6 +20,7 @@ az keyvault create --name $VAULT_NAME --resource-group $RESOURCE_GROUP_NAME --lo
 
 az keyvault secret set --vault-name $VAULT_NAME --name terraform-backend-key --value $ACCOUNT_KEY
 
+echo "respurce_group":$RESOURCE_GROUP_NAME
 echo "storage_account_name: $STORAGE_ACCOUNT_NAME"
 echo "container_name: $CONTAINER_NAME"
 echo "access_key: $ACCOUNT_KEY"

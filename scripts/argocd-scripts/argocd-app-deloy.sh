@@ -1,12 +1,17 @@
 #!/bin/sh
 
-kubectl config use-context gw-icap-aks-delivery-argocd
+argocd_context="gw-icap-aks-argocd-"${TF_VAR_suffix}
+
+kubectl config use-context $argocd_context
 
 # Cluster Resource Group Variables
-UKW_RESOURCE_GROUP="gw-icap-aks-delivery"
+UKW_RESOURCE_GROUP="gw-icap-aks-"${TF_VAR_suffix}
 
 # Cluster FQDN Variables
 UKW_CLUSTER_FQDN=$(az aks list -g $UKW_RESOURCE_GROUP --query "[].fqdn" | awk 'FNR == 2' | tr -d '",\040')
+
+# Cluster Context
+UKW_CONTEXT="gw-icap-aks-"${TF_VAR_suffix}"-ukw"s
 
 # App Name
 ADAPTATION_SERVICE="icap-adaptation-service"
@@ -16,8 +21,6 @@ RABBITMQ_OPERATOR="rabbitmq-operator"
 MONITORING_SERVICE="monitoring"
 CERT_MANAGER="cert-manager"
 
-# Cluster Context
-UKW_CONTEXT="gw-icap-aks-delivery-ukw"
 
 # App Paths
 PATH_ADAPTATION="adaptation"

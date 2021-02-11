@@ -3,7 +3,7 @@
 #terraform destroy -auto-approve
 terraform destroy
 
-@deletes keyvault
+#deletes keyvault
 az keyvault delete --name $VAULT_NAME --resource-group $RESOURCE_GROUP_NAME
 
 #deletes container
@@ -19,4 +19,4 @@ az group delete -n $RESOURCE_GROUP_NAME
 az keyvault purge --name $VAULT_NAME
 
 #deletes service priniple
-az ad sp delete --id $appID
+az ad sp delete --id $sppassword

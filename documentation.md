@@ -236,6 +236,8 @@ tenant_id       = "xyz"
 ```
 ### 2.4. Add required credentails
 
+- Currently below needs modifications
+
 - All the required secrets and variables are listed in  are ".env.example"
 
 - Run below
@@ -250,6 +252,18 @@ vim .env
 ```
 export $(xargs<.env)
 ```
+
+- Edit backend.tfvars 
+
+```
+resource_group_name  =  <copy RESOURCE_GROUP_NAME from .env>
+storage_account_name =  <copy STORAGE_ACCOUNT_NAME from .env
+container_name       =  <copy CONTAINER_NAME from .env
+
+#change aks to any unique value
+key                  =  "aks.terraform.tfstate"
+```
+
 ### 2.5 Create azure initial setup
 
 - Run below script
@@ -284,61 +298,8 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 ```
 echo $ARM_ACCESS_KEY
 ```
-### 2.7 File Modifications
 
-- Currently below needs modifications
-
-- main.tf
-```
-resource_group_name  = "gw-icap-tfstate"
-storage_account_name = "tfstate263sam"
-container_name       = "gw-icap-tfstate"
-key = "test1.upwork.terraform.tfstate"
-
-Note : First 3 values should be same as export values in step 2.3 
-```
-
-- modules/clusters/aks01/variables.tf
-```
-Change "default" field in location, resource_group , cluster_name
-
-```
-- modules/clusters/argocd-cluster/variables.tf
-```
-Change "default" field in location,resource_group , cluster_name
-
-```
-
-- modules/clusters/keyvaults/keyvault-ukw/variables.tf
-
-```
-Change "default" field in location, resource_group , kv_name
-```
-
-- modules/clusters/storage-accounts/storage-accounts-ukw/variables.tf
-```
-Change "default" field in location, resource_group_name
-```
-
-- scripts/az-secret-script/create-az-secret.sh
-```
-change UKW_VAULT to kv_name default value
-```
-- scripts\k8s_scripts\create-ns-docker-secret-uks.sh
-```
-Context used in kubectl config use-context to aks cluster
-RESOURCE_GROUP= resource group in storage-account
-VAULT_NAME= kv_name default vault
-```
-
-- scripts\argocd-scripts\argocd-app-deloy.sh
-```
-Context used in kubectl config use-context to argocd cluster
-UKW_RESOURCE_GROUP -  resource_group of aks
-UKW_CONTEXT - cluster_name of aks
-```
-
-### 2.8 Creating SSL Certs
+### 2.7 Creating SSL Certs
 
 
 ```bash
@@ -362,14 +323,13 @@ mkdir -p certs/mgmt-cert
 ```bash
 ./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh management-ui.ukwest.cloudapp.azure.com
 ```
-#### Customer Certificates
 
 ## 3. Deployment
 ### 3.1 Setup and Initialise Terraform
 
 - Next you'll need to use the following:
 ```
-terraform init
+terraform init -backend-config="backend.tfvars"
 ```
 - Next run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
 ```
@@ -408,7 +368,7 @@ Enter "yes"
 
 ### 3.4 Create Namespaces & Secrets.
 ```
-./scripts/k8s_scripts/create-ns-docker-secret-uks.sh
+./scripts/k8s_scripts/create-ns-docker-secret-ukw.sh
 
 ```
 ### 3.5 Guide to Setup ArgoCD
@@ -421,16 +381,6 @@ Next we will deploy the services using either Helm or Argocd. Both of the Readme
 
 ### 3.6 Deploy Using ArgoCD
 
-- Before deploying confirm you are on the right context (server)
-```
-argocd context
-```
-
-- if the right context is not selected switch to the right one running
-
-```
-argocd context <name of the server>
-```
 - Deploy ArgoCD
 ```
 ./scripts/argocd-scripts/argocd-app-deloy.sh

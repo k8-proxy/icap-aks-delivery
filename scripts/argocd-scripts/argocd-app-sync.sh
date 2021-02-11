@@ -21,7 +21,6 @@ do
   argocd app sync $item
 done
 
-
 #argocd app sync $RABBITMQ_OPERATOR
 #argocd app sync $ADAPTATION_SERVICE
 #argocd app sync $ADMINISTRATION_SERVICE

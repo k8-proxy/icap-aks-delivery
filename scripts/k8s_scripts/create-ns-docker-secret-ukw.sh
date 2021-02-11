@@ -2,11 +2,11 @@
 
 # This script will run create the neccesary namespaces and add the docker service account to the required namespace.
 
-kubectl config use-context gw-icap-aks-delivery-ukw
+kubectl config use-context "gw-icap-aks-"${TF_VAR_suffix}"-ukw"
 
 # Naming Variables
-RESOURCE_GROUP="gw-icap-aks-delivery-storage"
-VAULT_NAME="aks-delivery-keyvault-01"
+RESOURCE_GROUP="gw-icap-aks-storage-"${TF_VAR_suffix}
+VAULT_NAME="aks-keyvault-"${TF_VAR_suffix}
 
 # Secret Variables
 DOCKER_SERVER="https://index.docker.io/v1/"
