@@ -183,6 +183,36 @@ chocolatey install jq
 sudo apt-get install jq
 ```
 
+### Azure Subscription Pre Requisite
+
+- There should be atleast one subscription assosiated to azure account
+- The subscription should have **Controbutor** role allows a user to create and manage virtual machines
+- This documentation will provision a managed Azure Kubernetes (AKS) cluster on which to deploy the application. 
+- This cluster has configured to auto scaling and  runs on a minimum of 4 nodes and maximum of 100 nodes.
+- The specification of the nodes is defined in the `modules/aks01` configuration of this deployment
+- The default configuration is to run 4 nodes of which will consume one virtual CPU’s (vCPU) of  type **Standard_DS4_v2** type anf **100 gb** on disk size  -
+- The total amount of vCPU available in an Azure region is determined by the subscription itself.
+- When deploying, it is essential to ensure that there is enough vCPU available within your subscription to provision the node type and count specified.
+  
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| azure\_region | The cloud region | `string` | n/a | yes |
+| suffix | Short Suffix used for cluster names | `string` | n/a | yes |
+| DH_SA_USERNAME| Dockerhub username | `string` | n/a | yes |
+| DH_SA_PASSWORD| Dockerhub password | `string` | n/a | yes |
+| SmtpUser | SMTP Username | `string` | n/a | yes |
+| SmtpPass | SMTP Password | `string` | n/a | yes |
+| client\_id | Service Principal ClientID | `string` | n/a | yes |
+| client\_secret | Service Principal Secret | `string` | n/a | yes |
+| RESOURCE_GROUP_NAME | Resource group name for initial azure setup | `string` | n/a | yes |
+| STORAGE_ACCOUNT_NAME | Storage account name for initial azure setup | `string` | n/a | yes |
+| CONTAINER_NAME | Container Name for initial azure setup | `number` | n/a | yes |
+| VAULT_NAME | Vault Name for initial azure setup | `string` | n/a | yes |
+| key | state key name for terraform | `string`` | n/a | yes |
+
 ## 2. Usage
 
 ### 2.1 Clone Repo
@@ -349,8 +379,8 @@ mkdir -p certs/mgmt-cert
 ```
 
 #### Self signed quick start
-- Firstly you will need to create a ```certs/``` folder:
 
+**For evaluation use we have provided scripts to generate and apply self signed certificates**
 
 - Now the directories for the certs have been created, you can now create the certs using the following scripts:
 
@@ -362,10 +392,30 @@ mkdir -p certs/mgmt-cert
 ```bash
 ./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh management-ui.ukwest.cloudapp.azure.com
 ```
+
 #### Customer Certificates
 
-## 3. Deployment
-### 3.1 Setup and Initialise Terraform
+**If you have your own certificates for production use then follow below steps**
+
+- There will be two set of certificate, one for `icap-client` domain and other for `management-ui` domain
+
+- Rename `.crt` file to certificate.crt and `.key` file to `tls.key` for both domain certificates
+
+- Copy `icap-client certificates` to `certs/icap-cert`
+
+- Copy `management-ui certificates` to  `certs/mgmt-cert`
+
+- Run 
+
+```
+az storage blob directory upload -c $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME -s "./certs/*" -d certs --recursive
+```
+
+
+## 3. Pre deployment
+
+## 4. Deployment
+### 4.1 Setup and Initialise Terraform
 
 - Next you'll need to use the following:
 ```
@@ -391,7 +441,7 @@ Enter a value:
 Enter "yes"
 
 ```
-### 3.2 Switch Context 
+### 4.2 Switch Context 
 
 -Run:
 
@@ -399,19 +449,19 @@ Enter "yes"
 ./scripts/get-kube-context/get-kube-context-sh
 ```
 
-### 3.3 Loading Secrets into key vault.
+### 4.3 Loading Secrets into key vault.
 
 - Run
 ```
 ./scripts/az-secret-script/create-az-secret.sh
 ```
 
-### 3.4 Create Namespaces & Secrets.
+### 4.4 Create Namespaces & Secrets.
 ```
 ./scripts/k8s_scripts/create-ns-docker-secret-uks.sh
 
 ```
-### 3.5 Guide to Setup ArgoCD
+### 4.5 Guide to Setup ArgoCD
 
 Next we will deploy the services using either Helm or Argocd. Both of the Readme's for each can be found below:
 
@@ -419,7 +469,7 @@ Next we will deploy the services using either Helm or Argocd. Both of the Readme
 - [ArgoCD deployment guide Readme](/argocd/deployment-guide/README.md)
 - [ArgoCD user guide Readme](/argocd/user-guide/README.md)
 
-### 3.6 Deploy Using ArgoCD
+### 4.6 Deploy Using ArgoCD
 
 - Before deploying confirm you are on the right context (server)
 ```
@@ -436,13 +486,13 @@ argocd context <name of the server>
 ./scripts/argocd-scripts/argocd-app-deloy.sh
 ```
  
-## 4. Sync an ArgoCD App
-### 4.1 Sync From CLI
+## 5. Sync an ArgoCD App
+### 5.1 Sync From CLI
 Get Repo information from
 ```
 ./scripts/argocd-scripts/argocd-app-sync.sh
 ```
-### 4.2 Sync From UI
+### 5.2 Sync From UI
 - Access argocd UI using argocd public
 ```
    kubectl get svc -n argocd argocd-server
@@ -453,13 +503,13 @@ Get Repo information from
 
 You can deploy and sync each service from argoCD UI in the following order 1-RabbitMQ Operator, 2-Cert Manager, the rest can follow in any order
  
-## 5. Testing the solution.
+## 6. Testing the solution.
 
-### 5.1 Healthcheck
+### 6.1 Healthcheck
 
 - Make sure all the applications are healthy and synced from argocd UI
 
-### 5.2 Testing rebuild 
+### 6.2 Testing rebuild 
 
 Run ICAP client locally 
 
@@ -488,7 +538,7 @@ Run ICAP client locally
 6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
 7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
 
-### 6 Uninstall AKS-Solution. 
+### 7 Uninstall AKS-Solution. 
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
