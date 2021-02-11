@@ -40,7 +40,8 @@
 - Openssl
 - Microsoft account
 - Dockerhub account
-- Azure CLI - with permissions to create resources and service principle within your chosen subscription
+- Azure CLI 
+- Azure Subscription
 - Bash terminal or terminal able to execute bash scripts
 - JSON processor (jq)
 
@@ -196,6 +197,8 @@ sudo apt-get install jq
   
 
 ## Inputs
+
+These are the variables required for the deployment
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
