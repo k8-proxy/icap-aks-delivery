@@ -1,4 +1,6 @@
-terraform=$(terraform -version --json | jq '.terraform_version')
+#!/bin/bash
+
+terraform=$(terraform -version --json | jq -r  '.terraform_version')
 kubectl=$(kubectl version  --client --short | awk '{print $3}')
 opnessl=$(openssl version|awk '{print $2}')
 helm=$(helm version --short)
@@ -37,9 +39,9 @@ check_version(){
 }
 
 #check Jq version
-check_version "jq" $jq  "jq-1." "jq-1.6"
+check_version "Jq" $jq  "jq-1." "jq-1.6"
 #check Terraform version
-check_version "terraform" $terraform  "0.1" "0.14"
+check_version "Terraform" $terraform  "0.1" "0.14"
 #check helm version
 check_version "helm" $helm  "v3." "v3.4"
 #check OpenSsl version
@@ -48,6 +50,5 @@ check_version "OpenSsl" $opnessl  "1.1" "1.1.1h"
 check_version "Kubectl" $kubectl  "v1." "v1.19"
 #check Azure version
 check_version "AZ CLI" $azure  "2." "2.17"
-#check Azure version
-check_version "AZ CLI" $azure  "2." "2.17"
+
 
