@@ -13,6 +13,10 @@ module "create_aks_cluster_UKWest" {
 	source						="./modules/clusters/aks01"
 }
 
+module "create_aks_cluster_file_drop_UKWest" {
+	source						="./modules/clusters/file-drop-cluster"
+}
+
 # Storage Account Modules
 module "create_storage_account_NEU" {
 	source						="./modules/storage-accounts/storage-account-ukw"
