@@ -53,7 +53,6 @@
 | az cli | ~> 2.17 |
 | jq | ~> 1.6 |
 | Openssl | ~> 1.1 |
-| Bash terminal or terminal able to execute bash scripts |  |
 
 ### 1.1 Installation of Pre-requisites
 ### Terraform install
@@ -222,7 +221,7 @@ These are the variables required for the deployment
 | client\_secret | Service Principal Secret | `string` | n/a | yes |
 | RESOURCE_GROUP_NAME | Resource group name for initial azure setup | `string` | n/a | yes |
 | STORAGE_ACCOUNT_NAME | Storage account name for initial azure setup | `string` | n/a | yes |
-| CONTAINER_NAME | Container Name for initial azure setup | `number` | n/a | yes |
+| CONTAINER_NAME | Container Name for initial azure setup | `string` | n/a | yes |
 | VAULT_NAME | Vault Name for initial azure setup | `string` | n/a | yes |
 | key | state key name for terraform | `string` | n/a | yes |
 
