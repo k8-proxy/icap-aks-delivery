@@ -60,6 +60,18 @@ variable "dns_name_01" {
   default = "icap-client-ukw"
 }
 
+variable "icap_port" {
+  description = "Public port for the non-tls icap-service"
+  type = number
+  default = "1344"
+}
+
+variable "icap_tlsport" {
+  description = "Public port for the tls icap-service"
+  type = number
+  default = "1345"
+}
+
 ## Cert-Manager Chart
 variable "release_name02" {
   description = "This is the name of the release"
@@ -120,13 +132,13 @@ variable "chart_path04" {
 variable "dns_name_02" {
   description = "DNS name for Management-UI"
   type = string
-  default = "management-ui-uks-develop.uksouth.cloudapp.azure.com"
+  default = "management-ui-ukw.ukwest.cloudapp.azure.com"
 }
 
 variable "dns_name_03" {
   description = "DNS name for Identity Management-UI"
   type = string
-  default = "management-ui-uks-develop.uksouth.cloudapp.azure.com"
+  default = "management-ui-ukw.ukwest.cloudapp.azure.com"
 }
 
 ## Rabbitmq-Operator Chart
