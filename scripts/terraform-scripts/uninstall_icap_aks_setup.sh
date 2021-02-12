@@ -19,4 +19,4 @@ az group delete -n $RESOURCE_GROUP_NAME
 az keyvault purge --name $VAULT_NAME
 
 #deletes service priniple
-az ad sp delete --id $appID
+az ad sp delete --id $spusername
