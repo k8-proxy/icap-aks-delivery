@@ -33,17 +33,27 @@
     + [6 Uninstall AKS-Solution.](#6-uninstall-aks-solution)
 
 ## 1. Pre-requisites
-- Terraform 14.4+
+- Terraform 
 - Kubectl
 - Argocd
 - Helm
 - Openssl
-- Microsoft account
-- Dockerhub account
 - Azure CLI 
-- Azure Subscription
 - Bash terminal or terminal able to execute bash scripts
 - JSON processor (jq)
+- Microsoft account
+- Azure Subscription
+- Dockerhub account
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.14 |
+| kubectl | ~> 1.19 |
+| helm | ~> 3.4 |
+| az cli | ~> 2.17 |
+| jq | ~> 1.6 |
+| Openssl | ~> 1.1 |
+| Bash terminal or terminal able to execute bash scripts |  |
 
 ### 1.1 Installation of Pre-requisites
 ### Terraform install
