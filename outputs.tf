@@ -6,7 +6,3 @@ output "aks01_cluster_outputs" {
 output "storage_acccount_outputs" {
 	value = module.create_storage_account_NEU
 }
-
-output "keyvault_outputs" {
-	value = module.create_key_vault_NEU
-}
