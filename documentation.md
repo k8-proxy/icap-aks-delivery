@@ -337,7 +337,7 @@ storage_account_name = "tfstate263sam"
 container_name       = "gw-icap-tfstate"
 key = "test1.upwork.terraform.tfstate"
 
-Note : First 3 values should be same as export values in step 2.3 
+Note : First 3 values should be same as export values in step 2.4 .env values 
 ```
 
 - modules/clusters/aks01/variables.tf
