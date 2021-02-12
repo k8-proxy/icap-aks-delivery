@@ -73,7 +73,7 @@ resource "helm_release" "rabbitmq-operator" {
 resource "helm_release" "cert-manager" {
   name             = var.release_name02
   chart            = var.chart_repo02
-  wait             = false
+  wait             = true
   cleanup_on_fail  = true
 
   depends_on = [ 
@@ -87,7 +87,7 @@ resource "helm_release" "ingress-nginx" {
   namespace        = var.namespace03
   create_namespace = true
   chart            = var.chart_repo03
-  wait             = false
+  wait             = true
   cleanup_on_fail  = true
 
   depends_on = [ 
@@ -101,7 +101,7 @@ resource "helm_release" "administration" {
   namespace        = var.namespace04
   create_namespace = true
   chart            = var.chart_path04
-  wait             = false
+  wait             = true
   cleanup_on_fail  = true
   
   set {
@@ -122,6 +122,7 @@ resource "helm_release" "administration" {
   depends_on = [ 
     azurerm_kubernetes_cluster.icap-deploy,
     helm_release.cert-manager,
+    helm_release.ingress-nginx,
     null_resource.load_k8_secrets,
    ]
 }
@@ -132,12 +133,22 @@ resource "helm_release" "adaptation" {
   namespace        = var.namespace01
   create_namespace = true
   chart            = var.chart_path01
-  wait             = false
+  wait             = true
   cleanup_on_fail  = true
   
   set {
         name  = "secrets"
         value = "null"
+    }
+
+  set {
+        name  = "lbService.nontlsport"
+        value = var.icap_port
+    }
+  
+  set {
+        name  = "lbService.tlsport"
+        value = var.icap_tlsport
     }
   
   set {
@@ -157,7 +168,7 @@ resource "helm_release" "ncfs" {
   namespace        = var.namespace06
   create_namespace = true
   chart            = var.chart_path06
-  wait             = false
+  wait             = true
   cleanup_on_fail  = true
   
   set {
