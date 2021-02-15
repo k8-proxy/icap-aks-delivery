@@ -5,9 +5,6 @@ storage_account=$(az storage account show --name $STORAGE_ACCOUNT_NAME 2>/dev/nu
 container=$(az storage container exists --account-name $STORAGE_ACCOUNT_NAME  --account-key $ARM_ACCESS_KEY --name $CONTAINER_NAME 2>/dev/null | jq '.exists')
 keyvault=$(az keyvault show --name $VAULT_NAME 2>/dev/null | jq -r '.name')
 
-service_prinipal_owner_name_list=$(az ad sp owner list --id $spusername --query "[].userPrincipalName" | sed 's/[][]//g')
-account_user_name=$(az account show --query "user.name" )
-
 red=`tput setaf 1`
 white=`tput sgr 0`
 green=`tput setaf 2`
