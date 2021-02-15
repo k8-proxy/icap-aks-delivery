@@ -7,7 +7,6 @@ helm=$(helm version --short)
 azure=$(az version 2>/dev/null | jq -r '."azure-cli"')
 jq=$(jq --version)
 bash=$(echo ${BASH_VERSION})
-argocd=$(argocd version)
 
 red=`tput setaf 1`
 white=`tput sgr 0`

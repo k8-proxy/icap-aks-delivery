@@ -208,7 +208,7 @@ sudo apt-get install jq
 ### Pre-requisite healthcheck
 
 ```
-scripts/healthchecks/pre_requisite_healtcheck.sh
+./scripts/healthchecks/pre_requisite_healtcheck.sh
 
 ```
 
@@ -311,22 +311,7 @@ export $(xargs<.env)
 
 ```
 
-### 2.6 Azure setup Healthcheck 
-
-```
-./scripts/healthchecks/azure_setup_healthcheck.sh
-
-```
-
-### 2.6 Add Secrets to main KeyVault 
-
-- Run below script
-
-```
-./scripts/terraform-scripts/load_keyvault_secrets.sh
-```
-
-### 2.7 Add Terraform Backend Key to Environment
+### 2.6 Add Terraform Backend Key to Environment
 
 - Check you have access to keyvault using below command
 ```
@@ -342,7 +327,23 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 ```
 echo $ARM_ACCESS_KEY
 ```
-### 2.8 File Modifications
+
+### 2.7 Azure setup Healthcheck 
+
+```
+./scripts/healthchecks/azure_setup_healthcheck.sh
+
+```
+
+### 2.8 Add Secrets to main KeyVault 
+
+- Run below script
+
+```
+./scripts/terraform-scripts/load_keyvault_secrets.sh
+```
+
+### 2.9 File Modifications
 
 - Currently below needs modifications
 
@@ -373,7 +374,7 @@ Change "default" field in location, resource_group , kv_name, icap_dns, mgmt_dns
 Change "default" field in location, resource_group_name
 ```
 
-### 2.8 Creating SSL Certs
+### 3 Creating SSL Certs
 
 
 ```bash
@@ -390,12 +391,12 @@ mkdir -p certs/mgmt-cert
 - Now the directories for the certs have been created, you can now create the certs using the following scripts:
 
 ```bash
-./scripts/gen-certs/icap-cert/icap-gen-certs.sh <icap_dns>
+./scripts/gen-certs/icap-gen-certs.sh <icap_dns>
 ```
 
 - Management-UI
 ```bash
-./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh <mgmt_dns>
+./scripts/gen-certs/mgmt-gen-certs.sh <mgmt_dns>
 ```
 
 #### Customer Certificates
@@ -410,10 +411,10 @@ mkdir -p certs/mgmt-cert
 
 - Copy `management-ui certificates` to  `certs/mgmt-cert`
 
-## 3. Pre deployment
+## 4. Pre deployment
 
-## 4. Deployment
-### 4.1 Setup and Initialise Terraform
+## 5. Deployment
+### 5.1 Setup and Initialise Terraform
 
 - Next you'll need to use the following:
 ```
@@ -439,13 +440,27 @@ Enter a value:
 Enter "yes"
 ```
 
-## 5. Testing the solution.
+## 6. Testing the solution.
 
-### 5.1 Testing rebuild 
+### 6.1 Testing rebuild 
 
 Run ICAP client locally
 
-1. Open local terminal window 
+1. Find DNS of the ICAP-Server and Management UI
+
+- Icap-server
+
+    Run below command and 
+    ```
+     kubectl get service  --all-namespaces
+    ```
+
+    - ICAP-server : EXTERNAL-IP of frontend-icap-lb 
+
+- Management-ui : 
+        ```
+        kubectl get ingress -A
+        ```
 2. Run:
 
         git clone https://github.com/k8-proxy/icap-client-docker.git
@@ -470,7 +485,7 @@ Run ICAP client locally
 6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
 7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
 
-### 6 Uninstall AKS-Solution. 
+### 7 Uninstall AKS-Solution. 
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
