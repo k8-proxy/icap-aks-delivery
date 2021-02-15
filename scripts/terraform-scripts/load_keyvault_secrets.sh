@@ -6,9 +6,9 @@ az keyvault secret set --vault-name $VAULT_NAME --name sppassword --value $sppas
 
 az keyvault secret set --vault-name $VAULT_NAME --name TF-VAR-client-id --value $TF_VAR_client_id
 
-az keyvault secret set --vault-name $VAULT_NAME  --name TF-VAR-client-secret --value $TF_VAR_client_secre
+az keyvault secret set --vault-name $VAULT_NAME  --name TF-VAR-client-secret --value $TF_VAR_client_secret
 
-az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-USERNAME--value $DH_SA_USERNAME
+az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-USERNAME --value $DH_SA_USERNAME
 
 az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-PASSWORD --value $DH_SA_PASSWORD
 
