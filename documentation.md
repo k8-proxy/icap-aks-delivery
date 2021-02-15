@@ -12,7 +12,7 @@
     + [2.1 Clone Repo](#21-clone-repo)
     + [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
     + [2.3 Create azure initial setup](#23-create-azure-initial-setup)
-    + [2.4 Create terraform service principle](#24-create-terraform-service-principle)
+    + [2.4 Create terraform service principal](#24-create-terraform-service-principal)
     + [2.5 Add Secrets to main KeyVault](#25-add-secrets-to-main-keyvault)
     + [2.6 Add Terraform Backend Key to Environment](#26-add-terraform-backend-key-to-environment)
     + [2.7 File Modifications](#27-file-modifications)
@@ -35,7 +35,6 @@
 ## 1. Pre-requisites
 - Terraform 
 - Kubectl
-- Argocd
 - Helm
 - Openssl
 - Azure CLI 
@@ -204,8 +203,14 @@ sudo apt-get install jq
 - The total amount of vCPU available in an Azure region is determined by the subscription itself.
 - When deploying, it is essential to ensure that there is enough vCPU available within your subscription to provision the node type and count specified.
   
+### Pre-requisite healthcheck
 
-## Inputs
+```
+scripts/healthchecks/pre_requisite_healtcheck.sh
+
+```
+
+### Inputs
 
 These are the variables required for the deployment
 
@@ -247,12 +252,15 @@ az account list --output table
 
 az account set -s <subscription ID>
 
+# Confirm you are on correct subscription
+az account show
+
 ```
-### 2.3 Create terraform service principle
+### 2.3 Create terraform service principal
 
 **PLEASE NOTE THIS ONLY NEEDS TO BE DONE ONCE FOR A SINGLE SUBSCRIPTION**
 
-This next part will create a service principle, with the least amount of privileges, to perform the AKS Deployment.
+This next part will create a service principal, with the least amount of privileges, to perform the AKS Deployment.
 
 ```
 ./scripts/terraform-scripts/createTerraormServicePrinciple.sh
@@ -301,16 +309,22 @@ export $(xargs<.env)
 
 ```
 
-### 2.5 Add Secrets to main KeyVault 
+### 2.6 Azure setup Healthcheck 
 
-- Run below scrip once you have done step 2.4
-( You can also do this in Azure portal.Login to azure account and search <KEY_VAULT_NAME>,Go to secrets and add the above secrets. )
+```
+./scripts/healthchecks/azure_setup_healthcheck.sh
+
+```
+
+### 2.6 Add Secrets to main KeyVault 
+
+- Run below script
 
 ```
 ./scripts/terraform-scripts/load_keyvault_secrets.sh
 ```
 
-### 2.6 Add Terraform Backend Key to Environment
+### 2.7 Add Terraform Backend Key to Environment
 
 - Check you have access to keyvault using below command
 ```
@@ -326,7 +340,7 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 ```
 echo $ARM_ACCESS_KEY
 ```
-### 2.7 File Modifications
+### 2.8 File Modifications ( Optional )
 
 - Currently below needs modifications
 
@@ -342,12 +356,7 @@ Note : First 3 values should be same as export values in step 2.4 .env values
 
 - modules/clusters/aks01/variables.tf
 ```
-Change "default" field in location, resource_group , cluster_name
-
-```
-- modules/clusters/argocd-cluster/variables.tf
-```
-Change "default" field in location,resource_group , cluster_name
+Change "default" field in location, resource_group , cluster_name, dns_name_01, dns_name_02, dns_name_03
 
 ```
 
@@ -360,24 +369,6 @@ Change "default" field in location, resource_group , kv_name
 - modules/clusters/storage-accounts/storage-accounts-ukw/variables.tf
 ```
 Change "default" field in location, resource_group_name
-```
-
-- scripts/az-secret-script/create-az-secret.sh
-```
-change UKW_VAULT to kv_name default value
-```
-- scripts\k8s_scripts\create-ns-docker-secret-uks.sh
-```
-Context used in kubectl config use-context to aks cluster
-RESOURCE_GROUP= resource group in storage-account
-VAULT_NAME= kv_name default vault
-```
-
-- scripts\argocd-scripts\argocd-app-deloy.sh
-```
-Context used in kubectl config use-context to argocd cluster
-UKW_RESOURCE_GROUP -  resource_group of aks
-UKW_CONTEXT - cluster_name of aks
 ```
 
 ### 2.8 Creating SSL Certs
@@ -417,13 +408,6 @@ mkdir -p certs/mgmt-cert
 
 - Copy `management-ui certificates` to  `certs/mgmt-cert`
 
-- Run 
-
-```
-az storage blob directory upload -c $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME -s "./certs/*" -d certs --recursive
-```
-
-
 ## 3. Pre deployment
 
 ## 4. Deployment
@@ -451,77 +435,11 @@ Terraform will perform the actions described above.
 Only 'yes' will be accepted to approve.
 Enter a value: 
 Enter "yes"
-
-```
-### 4.2 Switch Context 
-
--Run:
-
-```
-./scripts/get-kube-context/get-kube-context-sh
 ```
 
-### 4.3 Loading Secrets into key vault.
+## 5. Testing the solution.
 
-- Run
-```
-./scripts/az-secret-script/create-az-secret.sh
-```
-
-### 4.4 Create Namespaces & Secrets.
-```
-./scripts/k8s_scripts/create-ns-docker-secret-uks.sh
-
-```
-### 4.5 Guide to Setup ArgoCD
-
-Next we will deploy the services using either Helm or Argocd. Both of the Readme's for each can be found below:
-
-- [ArgoCD Installation guide Readme](/argocd/installation-guide/README.md)
-- [ArgoCD deployment guide Readme](/argocd/deployment-guide/README.md)
-- [ArgoCD user guide Readme](/argocd/user-guide/README.md)
-
-### 4.6 Deploy Using ArgoCD
-
-- Before deploying confirm you are on the right context (server)
-```
-argocd context
-```
-
-- if the right context is not selected switch to the right one running
-
-```
-argocd context <name of the server>
-```
-- Deploy ArgoCD
-```
-./scripts/argocd-scripts/argocd-app-deloy.sh
-```
- 
-## 5. Sync an ArgoCD App
-### 5.1 Sync From CLI
-Get Repo information from
-```
-./scripts/argocd-scripts/argocd-app-sync.sh
-```
-### 5.2 Sync From UI
-- Access argocd UI using argocd public
-```
-   kubectl get svc -n argocd argocd-server
-
-```
- 
-- Login to argocd UI
-
-You can deploy and sync each service from argoCD UI in the following order 1-RabbitMQ Operator, 2-Cert Manager, the rest can follow in any order
- 
-## 6. Testing the solution.
-
-### 6.1 Healthcheck
-
-- Make sure all the applications are healthy and synced from argocd UI
-
-### 6.2 Testing rebuild 
+### 5.1 Testing rebuild 
 
 Run ICAP client locally 
 
@@ -550,11 +468,11 @@ Run ICAP client locally
 6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
 7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
 
-### 7 Uninstall AKS-Solution. 
+### 6 Uninstall AKS-Solution. 
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
-- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principle. 
+- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principal. 
 
 ```
 ./scripts/terraform-scripts/uninstall_icap_aks_setup.sh
