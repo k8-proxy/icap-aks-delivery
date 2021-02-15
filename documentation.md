@@ -365,7 +365,7 @@ Change "default" field in location, resource_group , cluster_name, dns_name_01, 
 - modules/clusters/keyvaults/keyvault-ukw/variables.tf
 
 ```
-Change "default" field in location, resource_group , kv_name
+Change "default" field in location, resource_group , kv_name, icap_dns, mgmt_dns
 ```
 
 - modules/clusters/storage-accounts/storage-accounts-ukw/variables.tf
@@ -390,12 +390,12 @@ mkdir -p certs/mgmt-cert
 - Now the directories for the certs have been created, you can now create the certs using the following scripts:
 
 ```bash
-./scripts/gen-certs/icap-cert/icap-gen-certs.sh <dns_name_01>.ukwest.cloudapp.azure.com
+./scripts/gen-certs/icap-cert/icap-gen-certs.sh <icap_dns>
 ```
 
 - Management-UI
 ```bash
-./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh <dns_name_02>
+./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh <mgmt_dns>
 ```
 
 #### Customer Certificates
