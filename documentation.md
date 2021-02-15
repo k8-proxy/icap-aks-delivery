@@ -224,8 +224,6 @@ These are the variables required for the deployment
 | DH_SA_PASSWORD| Dockerhub password | `string` | n/a | yes |
 | SmtpUser | SMTP Username | `string` | n/a | yes |
 | SmtpPass | SMTP Password | `string` | n/a | yes |
-| client\_id | Service Principal ClientID | `string` | n/a | yes |
-| client\_secret | Service Principal Secret | `string` | n/a | yes |
 | RESOURCE_GROUP_NAME | Resource group name for initial azure setup | `string` | n/a | yes |
 | STORAGE_ACCOUNT_NAME | Storage account name for initial azure setup | `string` | n/a | yes |
 | CONTAINER_NAME | Container Name for initial azure setup | `string` | n/a | yes |
@@ -258,35 +256,8 @@ az account set -s <subscription ID>
 az account show
 
 ```
-### 2.3 Create terraform service principal
 
-**PLEASE NOTE THIS ONLY NEEDS TO BE DONE ONCE FOR A SINGLE SUBSCRIPTION**
-
-This next part will create a service principal, with the least amount of privileges, to perform the AKS Deployment.
-
-```
-./scripts/terraform-scripts/createTerraormServicePrinciple.sh
-```
-
-- When prompted `The provider.tf file exists.  Do you want to overwrite? ` , Enter `Y`
-
-- The output will be similar to this. Keep a copy of `client id` and `client secret`
-
-```
-{
-  "appId": "xyz",
-  "displayName": "xyz",
-  "name": "xyz",
-  "password": "xyz",
-  "tenant": "xyz"
-}
-subscription_id = "xyz"
-client_id       = "xyz"
-client_secret   = "xyz"
-tenant_id       = "xyz"
-
-```
-### 2.4. Add required credentails
+### 2.3. Add required credentails
 
 - All the required secrets and variables are listed in  are ".env.example"
 
@@ -302,7 +273,7 @@ vim .env
 ```
 export $(xargs<.env)
 ```
-### 2.5 Create azure initial setup
+### 2.4 Create azure initial setup
 
 - Run below script
 
@@ -311,7 +282,7 @@ export $(xargs<.env)
 
 ```
 
-### 2.6 Add Terraform Backend Key to Environment
+### 2.5 Add Terraform Backend Key to Environment
 
 - Check you have access to keyvault using below command
 ```
@@ -328,14 +299,14 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 echo $ARM_ACCESS_KEY
 ```
 
-### 2.7 Azure setup Healthcheck 
+### 2.6 Azure setup Healthcheck 
 
 ```
 ./scripts/healthchecks/azure_setup_healthcheck.sh
 
 ```
 
-### 2.8 Add Secrets to main KeyVault 
+### 2.7 Add Secrets to main KeyVault 
 
 - Run below script
 
@@ -343,7 +314,7 @@ echo $ARM_ACCESS_KEY
 ./scripts/terraform-scripts/load_keyvault_secrets.sh
 ```
 
-### 2.9 File Modifications
+### 2.8 File Modifications
 
 - Currently below needs modifications
 

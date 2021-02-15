@@ -15,5 +15,3 @@ az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-PASSWORD --value $
 az keyvault secret set --vault-name $VAULT_NAME  --name SmtpUser --value $SmtpUser
 
 az keyvault secret set --vault-name $VAULT_NAME  --name SmtpPass --value $SmtpPass
-
-az keyvault secret set --vault-name $VAULT_NAME  --name manage-endpoint --value $manage_endpoint
