@@ -1,4 +1,5 @@
 # Instructions
+<!--
 ## Table of contents
 
 - [Instructions](#instructions)
@@ -31,6 +32,7 @@
     + [5.1 Healthcheck](#51-healthcheck)
     + [5.2 Testing rebuild](#52-testing-rebuild)
     + [6 Uninstall AKS-Solution.](#6-uninstall-aks-solution)
+-->
 
 ## 1. Pre-requisites
 - Terraform 
@@ -340,7 +342,7 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 ```
 echo $ARM_ACCESS_KEY
 ```
-### 2.8 File Modifications ( Optional )
+### 2.8 File Modifications
 
 - Currently below needs modifications
 
@@ -388,12 +390,12 @@ mkdir -p certs/mgmt-cert
 - Now the directories for the certs have been created, you can now create the certs using the following scripts:
 
 ```bash
-./scripts/gen-certs/icap-cert/icap-gen-certs.sh icap-client.ukwest.cloudapp.azure.com
+./scripts/gen-certs/icap-cert/icap-gen-certs.sh <dns_name_01>.ukwest.cloudapp.azure.com
 ```
 
 - Management-UI
 ```bash
-./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh management-ui.ukwest.cloudapp.azure.com
+./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh <dns_name_02>
 ```
 
 #### Customer Certificates
@@ -441,7 +443,7 @@ Enter "yes"
 
 ### 5.1 Testing rebuild 
 
-Run ICAP client locally 
+Run ICAP client locally
 
 1. Open local terminal window 
 2. Run:
