@@ -374,6 +374,15 @@ Change "default" field in location, resource_group , kv_name, icap_dns, mgmt_dns
 Change "default" field in location, resource_group_name
 ```
 
+- scripts/k8s_scripts/create-ns-docker-secret-ukw.sh
+```
+change vaules of RESOURCE_GROUP,VAULT_NAME
+```
+
+- scripts/az-secret-script/create-az-secret.sh
+```
+change UKW_VAULT and VAULT_NAME
+```
 ### 3 Creating SSL Certs
 
 
