@@ -111,12 +111,12 @@ resource "helm_release" "administration" {
 
   set {
         name  = "managementui.ingress.host"
-        value = var.dns_name_02
+        value = var.dns_name_04
     }
 
   set {
         name  = "identitymanagementservice.configuration.ManagementUIEndpoint"
-        value = var.dns_name_03
+        value = var.dns_name_04
     }
 
   depends_on = [ 

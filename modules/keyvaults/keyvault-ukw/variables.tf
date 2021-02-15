@@ -27,3 +27,10 @@ variable "mgmt_dns" {
   type        = string
   default     = "management-ui.ukwest.cloudapp.azure.com"
 }
+
+variable "file_drop_dns" {
+  description = "Name of the common name used for the certs"
+  type        = string
+  default     = "file-drop.ukwest.cloudapp.azure.com"
+}
+
