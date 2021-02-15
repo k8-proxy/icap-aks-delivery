@@ -15,3 +15,15 @@ variable "kv_name" {
   type        = string
   default     = "aks-delivery-keyvault-01"
 }
+
+variable "icap_dns" {
+  description = "Name of the common name used for the certs"
+  type        = string
+  default     = "icap-client.ukwest.cloudapp.azure.com"
+}
+
+variable "mgmt_dns" {
+  description = "Name of the common name used for the certs"
+  type        = string
+  default     = "management-ui.ukwest.cloudapp.azure.com"
+}

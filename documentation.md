@@ -1,4 +1,5 @@
 # Instructions
+<!--
 ## Table of contents
 
 - [Instructions](#instructions)
@@ -12,7 +13,7 @@
     + [2.1 Clone Repo](#21-clone-repo)
     + [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
     + [2.3 Create azure initial setup](#23-create-azure-initial-setup)
-    + [2.4 Create terraform service principle](#24-create-terraform-service-principle)
+    + [2.4 Create terraform service principal](#24-create-terraform-service-principal)
     + [2.5 Add Secrets to main KeyVault](#25-add-secrets-to-main-keyvault)
     + [2.6 Add Terraform Backend Key to Environment](#26-add-terraform-backend-key-to-environment)
     + [2.7 File Modifications](#27-file-modifications)
@@ -31,17 +32,28 @@
     + [5.1 Healthcheck](#51-healthcheck)
     + [5.2 Testing rebuild](#52-testing-rebuild)
     + [6 Uninstall AKS-Solution.](#6-uninstall-aks-solution)
+-->
 
 ## 1. Pre-requisites
-- Terraform 14.4+
+- Terraform 
 - Kubectl
-- Argocd
 - Helm
 - Openssl
-- Microsoft account
-- Azure CLI - with permissions to create resources and service principle within your chosen subscription
+- Azure CLI 
 - Bash terminal or terminal able to execute bash scripts
 - JSON processor (jq)
+- Microsoft account
+- Azure Subscription
+- Dockerhub account
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.14 |
+| kubectl | ~> 1.19 |
+| helm | ~> 3.4 |
+| az cli | ~> 2.17 |
+| jq | ~> 1.6 |
+| Openssl | ~> 1.1 |
 
 ### 1.1 Installation of Pre-requisites
 ### Terraform install
@@ -182,6 +194,44 @@ chocolatey install jq
 sudo apt-get install jq
 ```
 
+### Azure Subscription Pre Requisite
+
+- There should be atleast one subscription assosiated to azure account
+- The subscription should have **Controbutor** role allows a user to create and manage virtual machines
+- This documentation will provision a managed Azure Kubernetes (AKS) cluster on which to deploy the application. 
+- This cluster has configured to auto scaling and  runs on a minimum of 4 nodes and maximum of 100 nodes.
+- The specification of the nodes is defined in the `modules/aks01` configuration of this deployment
+- The default configuration is to run 4 nodes of which will consume one virtual CPU’s (vCPU) of  type **Standard_DS4_v2** type anf **100 gb** on disk size  -
+- The total amount of vCPU available in an Azure region is determined by the subscription itself.
+- When deploying, it is essential to ensure that there is enough vCPU available within your subscription to provision the node type and count specified.
+  
+### Pre-requisite healthcheck
+
+```
+./scripts/healthchecks/pre_requisite_healtcheck.sh
+
+```
+
+### Inputs
+
+These are the variables required for the deployment
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| azure\_region | The cloud region | `string` | n/a | yes |
+| suffix | Short Suffix used for cluster names | `string` | n/a | yes |
+| DH_SA_USERNAME| Dockerhub username | `string` | n/a | yes |
+| DH_SA_PASSWORD| Dockerhub password | `string` | n/a | yes |
+| SmtpUser | SMTP Username | `string` | n/a | yes |
+| SmtpPass | SMTP Password | `string` | n/a | yes |
+| client\_id | Service Principal ClientID | `string` | n/a | yes |
+| client\_secret | Service Principal Secret | `string` | n/a | yes |
+| RESOURCE_GROUP_NAME | Resource group name for initial azure setup | `string` | n/a | yes |
+| STORAGE_ACCOUNT_NAME | Storage account name for initial azure setup | `string` | n/a | yes |
+| CONTAINER_NAME | Container Name for initial azure setup | `string` | n/a | yes |
+| VAULT_NAME | Vault Name for initial azure setup | `string` | n/a | yes |
+| key | state key name for terraform | `string` | n/a | yes |
+
 ## 2. Usage
 
 ### 2.1 Clone Repo
@@ -204,31 +254,15 @@ az account list --output table
 
 az account set -s <subscription ID>
 
-```
-
-### 2.3 Create azure initial setup
-
-- Give any meaningfull vaule to below variables and run it in terminal
-```
-    export LOCATION=uksouth
-    export RESOURCE_GROUP_NAME=gw-icap-tfstate
-    export STORAGE_ACCOUNT_NAME=tfstate263
-    export CONTAINER_NAME=gw-icap-tfstate
-    export TAGS='createdby='
-    export VAULT_NAME=gw-tfstate-Vault
+# Confirm you are on correct subscription
+az account show
 
 ```
-- Run below script
-
-```     
-./scripts/terraform-scripts/create_azure_setup.sh
-```
-
-### 2.4 Create terraform service principle
+### 2.3 Create terraform service principal
 
 **PLEASE NOTE THIS ONLY NEEDS TO BE DONE ONCE FOR A SINGLE SUBSCRIPTION**
 
-This next part will create a service principle, with the least amount of privileges, to perform the AKS Deployment.
+This next part will create a service principal, with the least amount of privileges, to perform the AKS Deployment.
 
 ```
 ./scripts/terraform-scripts/createTerraormServicePrinciple.sh
@@ -252,52 +286,28 @@ client_secret   = "xyz"
 tenant_id       = "xyz"
 
 ```
+### 2.4. Add required credentails
 
-- Run 
+- All the required secrets and variables are listed in  are ".env.example"
 
-```
-export appId=<APP ID>
-```
-
-### 2.5 Add Secrets to main KeyVault
-
-- Get value for below variables
+- Run below
 
 ```
-token-username       =    "policy-management"
-spusername           =    < client id >
-sppassword           =    < client secret >
-TF-VAR-client-id     =    < client id >
-TF-VAR-client-secret =    < client secret >
-DH-SA-USERNAME       =    < dockerhub username >
-DH-SA-PASSWORD       =    < dockerhub password  >
-SmtpUser             =    < smtup user >
-SmtpPass             =    < smtp pass >
-manage-endpoint      =
+cp .env.example .env
+vim .env
 ```
-- Run below commands with proper values to save secrets in keyVault
-( You can also do this in Azure portal.Login to azure account and search <KEY_VAULT_NAME>,Go to secrets and add the above secrets. )
 
+- Edit all the required details. 
+- Run
 ```
-az keyvault secret set --vault-name $VAULT_NAME  --name "token-username" --value <token-username>
+export $(xargs<.env)
+```
+### 2.5 Create azure initial setup
 
-az keyvault secret set --vault-name $VAULT_NAME --name spusername --value <CLIENT_ID>
+- Run below script
 
-az keyvault secret set --vault-name $VAULT_NAME --name sppassword --value <CLIENT_SECRET>
-
-az keyvault secret set --vault-name $VAULT_NAME --name "TF-VAR-client-id" --value <CLIENT_ID>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name "TF-VAR-client-secret" --value <CLIENT_SECRET>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-USERNAME--value <dockerhub username>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name DH-SA-PASSWORD --value <dockerhub password>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name SmtpUser --value <smtup user>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name SmtpPass --value <smtp pass>
-
-az keyvault secret set --vault-name $VAULT_NAME  --name manage-endpoint --value <manage-endpoint>
+```     
+./scripts/terraform-scripts/create_azure_setup.sh
 
 ```
 
@@ -317,7 +327,23 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 ```
 echo $ARM_ACCESS_KEY
 ```
-### 2.7 File Modifications
+
+### 2.7 Azure setup Healthcheck 
+
+```
+./scripts/healthchecks/azure_setup_healthcheck.sh
+
+```
+
+### 2.8 Add Secrets to main KeyVault 
+
+- Run below script
+
+```
+./scripts/terraform-scripts/load_keyvault_secrets.sh
+```
+
+### 2.9 File Modifications
 
 - Currently below needs modifications
 
@@ -328,24 +354,19 @@ storage_account_name = "tfstate263sam"
 container_name       = "gw-icap-tfstate"
 key = "test1.upwork.terraform.tfstate"
 
-Note : First 3 values should be same as export values in step 2.3 
+Note : First 3 values should be same as export values in step 2.4 .env values 
 ```
 
 - modules/clusters/aks01/variables.tf
 ```
-Change "default" field in location, resource_group , cluster_name
-
-```
-- modules/clusters/argocd-cluster/variables.tf
-```
-Change "default" field in location,resource_group , cluster_name
+Change "default" field in location, resource_group , cluster_name, dns_name_01, dns_name_02, dns_name_03
 
 ```
 
 - modules/clusters/keyvaults/keyvault-ukw/variables.tf
 
 ```
-Change "default" field in location, resource_group , kv_name
+Change "default" field in location, resource_group , kv_name, icap_dns, mgmt_dns
 ```
 
 - modules/clusters/storage-accounts/storage-accounts-ukw/variables.tf
@@ -353,26 +374,56 @@ Change "default" field in location, resource_group , kv_name
 Change "default" field in location, resource_group_name
 ```
 
+- scripts/k8s_scripts/create-ns-docker-secret-ukw.sh
+```
+change vaules of RESOURCE_GROUP,VAULT_NAME
+```
+
 - scripts/az-secret-script/create-az-secret.sh
 ```
-change UKW_VAULT to kv_name default value
+change UKW_VAULT and VAULT_NAME
 ```
-- scripts\k8s_scripts\create-ns-docker-secret-uks.sh
-```
-Context used in kubectl config use-context to aks cluster
-RESOURCE_GROUP= resource group in storage-account
-VAULT_NAME= kv_name default vault
+### 3 Creating SSL Certs
+
+
+```bash
+
+mkdir -p certs/icap-cert
+
+mkdir -p certs/mgmt-cert
 ```
 
-- scripts\argocd-scripts\argocd-app-deloy.sh
-```
-Context used in kubectl config use-context to argocd cluster
-UKW_RESOURCE_GROUP -  resource_group of aks
-UKW_CONTEXT - cluster_name of aks
+#### Self signed quick start
+
+**For evaluation use we have provided scripts to generate and apply self signed certificates**
+
+- Now the directories for the certs have been created, you can now create the certs using the following scripts:
+
+```bash
+./scripts/gen-certs/icap-gen-certs.sh <icap_dns>
 ```
 
-## 3. Deployment
-### 3.1 Setup and Initialise Terraform
+- Management-UI
+```bash
+./scripts/gen-certs/mgmt-gen-certs.sh <mgmt_dns>
+```
+
+#### Customer Certificates
+
+**If you have your own certificates for production use then follow below steps**
+
+- There will be two set of certificate, one for `icap-client` domain and other for `management-ui` domain
+
+- Rename `.crt` file to certificate.crt and `.key` file to `tls.key` for both domain certificates
+
+- Copy `icap-client certificates` to `certs/icap-cert`
+
+- Copy `management-ui certificates` to  `certs/mgmt-cert`
+
+## 4. Pre deployment
+
+## 5. Deployment
+### 5.1 Setup and Initialise Terraform
 
 - Next you'll need to use the following:
 ```
@@ -396,103 +447,29 @@ Terraform will perform the actions described above.
 Only 'yes' will be accepted to approve.
 Enter a value: 
 Enter "yes"
-
-```
-### 3.2 Switch Context 
-
--Run:
-
-```
-./scripts/get-kube-context/get-kube-context-sh
 ```
 
-### 3.3 Loading Secrets into key vault.
+## 6. Testing the solution.
 
-- Run
-```
-./scripts/az-secret-script/create-az-secret.sh
-```
+### 6.1 Testing rebuild 
 
-### 3.4 Creating SSL Certs
+Run ICAP client locally
 
-- Firstly you will need to create a ```certs/``` folder:
+1. Find DNS of the ICAP-Server and Management UI
 
-```bash
-mkdir certs/ 
+- Icap-server
 
-mkdir certs/icap-cert
+    Run below command and 
+    ```
+     kubectl get service  --all-namespaces
+    ```
 
-mkdir certs/mgmt-cert
-```
+    - ICAP-server : EXTERNAL-IP of frontend-icap-lb 
 
-- Now the directories for the certs have been created, you can now create the certs using the following scripts:
-
-```bash
-./scripts/gen-certs/icap-cert/icap-gen-certs.sh icap-client.ukwest.cloudapp.azure.com
-```
-
-- Management-UI
-```bash
-./scripts/gen-certs/mgmt-cert/mgmt-gen-certs.sh management-ui.ukwest.cloudapp.azure.com
-```
-### 3.5 Create Namespaces & Secrets.
-```
-./scripts/k8s_scripts/create-ns-docker-secret-uks.sh
-
-```
-### 3.6 Guide to Setup ArgoCD
-
-Next we will deploy the services using either Helm or Argocd. Both of the Readme's for each can be found below:
-
-- [ArgoCD Installation guide Readme](/argocd/installation-guide/README.md)
-- [ArgoCD deployment guide Readme](/argocd/deployment-guide/README.md)
-- [ArgoCD user guide Readme](/argocd/user-guide/README.md)
-
-### 3.7 Deploy Using ArgoCD
-
-- Before deploying confirm you are on the right context (server)
-```
-argocd context
-```
-
-- if the right context is not selected switch to the right one running
-
-```
-argocd context <name of the server>
-```
-- Deploy ArgoCD
-```
-./scripts/argocd-scripts/argocd-app-deloy.sh
-```
- 
-## 4. Sync an ArgoCD App
-### 4.1 Sync From CLI
-Get Repo information from
-```
-./scripts/argocd-scripts/argocd-app-sync.sh
-```
-### 4.2 Sync From UI
-- Access argocd UI using argocd public
-```
-   kubectl get svc -n argocd argocd-server
-
-```
- 
-- Login to argocd UI
-
-You can deploy and sync each service from argoCD UI in the following order 1-RabbitMQ Operator, 2-Cert Manager, the rest can follow in any order
- 
-## 5. Testing the solution.
-
-### 5.1 Healthcheck
-
-- Make sure all the applications are healthy and synced from argocd UI
-
-### 5.2 Testing rebuild 
-
-Run ICAP client locally 
-
-1. Open local terminal window 
+- Management-ui : 
+        ```
+        kubectl get ingress -A
+        ```
 2. Run:
 
         git clone https://github.com/k8-proxy/icap-client-docker.git
@@ -517,11 +494,11 @@ Run ICAP client locally
 6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
 7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
 
-### 6 Uninstall AKS-Solution. 
+### 7 Uninstall AKS-Solution. 
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
-- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principle. 
+- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principal. 
 
 ```
 ./scripts/terraform-scripts/uninstall_icap_aks_setup.sh

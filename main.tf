@@ -13,8 +13,8 @@ module "create_aks_cluster_UKWest" {
 	source						="./modules/clusters/aks01"
 }
 
-module "create_aks_cluster_ARGOCD" {
-	source						="./modules/clusters/argocd-cluster"
+module "create_aks_cluster_file_drop_UKWest" {
+	source						="./modules/clusters/file-drop-cluster"
 }
 
 # Storage Account Modules

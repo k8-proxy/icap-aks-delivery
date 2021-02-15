@@ -96,3 +96,33 @@ resource "azurerm_key_vault" "keyvault" {
     ]
   }
 }
+
+resource "null_resource" "create_icap_certs" {
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash ./scripts/gen-certs/icap-gen-certs.sh ${var.icap_dns}"
+  }
+}
+
+resource "null_resource" "create_mgmt_certs" {
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash ./scripts/gen-certs/mgmt-gen-certs.sh ${var.mgmt_dns}"
+  }
+}
+
+resource "null_resource" "load_secrets" {
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash ./scripts/az-secret-script/create-az-secret.sh"
+  }
+
+  depends_on = [ 
+    null_resource.create_icap_certs,
+    null_resource.create_mgmt_certs,
+    azurerm_key_vault.keyvault,
+   ]
+}
