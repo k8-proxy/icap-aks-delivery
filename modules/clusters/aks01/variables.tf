@@ -129,14 +129,8 @@ variable "chart_path04" {
   default 	  = "./charts/icap-infrastructure/administration"
 }
 
-variable "dns_name_02" {
+variable "dns_name_04" {
   description = "DNS name for Management-UI"
-  type = string
-  default = "management-ui-ukw.ukwest.cloudapp.azure.com"
-}
-
-variable "dns_name_03" {
-  description = "DNS name for Identity Management-UI"
   type = string
   default = "management-ui-ukw.ukwest.cloudapp.azure.com"
 }
