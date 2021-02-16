@@ -197,7 +197,7 @@ resource "null_resource" "load_k8_secrets" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash ./scripts/k8s_scripts/create-ns-docker-secret-ukw.sh"
+    command = "/bin/bash ./scripts/k8s_scripts/create-ns-docker-secret-ukw.sh ${var.storage_resource} ${var.kv_vault_name}"
   }
 
   depends_on = [

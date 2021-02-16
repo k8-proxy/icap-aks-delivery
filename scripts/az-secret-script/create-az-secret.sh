@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Vault Variables
-UKW_VAULT="aks-delivery-keyvault-01"
-TF_STATE_VAULT="gw-tfstate-Vault"
+UKW_VAULT=$1
+TF_STATE_VAULT=$VAULT_NAME
 
 # Secret Name Variables
 SECRET_NAME01="DH-SA-USERNAME"

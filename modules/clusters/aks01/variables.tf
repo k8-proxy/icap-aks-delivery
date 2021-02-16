@@ -107,7 +107,7 @@ variable "namespace03" {
 variable "chart_repo03" {
   description = "This is the path to the chart"
   type        = string
-  default 	  = "ingress-nginx/ingress-nginx"
+  default 	  = "charts/icap-infrastructure/ingress-nginx"
 }
 
 ## Administration Chart
@@ -172,3 +172,17 @@ variable "chart_path06" {
   type        = string
   default 	  = "./charts/icap-infrastructure/ncfs"
 }
+
+
+variable "storage_resource" {
+  description = "This is storage_resource"
+  type        = string
+
+}
+
+variable "kv_vault_name" {
+  description = "This is kv_vault_name"
+  type        = string
+
+}
+
