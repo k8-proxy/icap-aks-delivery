@@ -157,10 +157,33 @@
     ```
     kubectl version –client
     ```
+    
+### Helm install
+
+**MacOS**
+- Copy and paste the following command
+```
+brew install helm
+ ```
  
+**Windows**
+- Run the following command with chocolatey
+```
+brew install helm
+```
+
+**Linux**
+- Copy and paste the following commands
+```
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+sudo apt-get install apt-transport-https --yes
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+```
 ### Open SSL 
 
-**MacOs**  
+**MacOS**  
 
 ```
 brew info openssl
@@ -176,6 +199,26 @@ Follow the instructions [here](https://www.xolphin.com/support/OpenSSL/OpenSSL_-
 
 OpenSSL has been installed from source on Linux Ubuntu and CentOS
 
+### Azure CLI
+
+**MacOS**
+```
+brew update && brew install azure-cli
+```
+**Windows**
+- Follow instructions in [this link](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
+
+**Linux**
+- Copy and paste the following commands
+```$ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+$ echo -e "[azure-cli]
+$ name=Azure CLI
+$ baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+$ enabled=1
+$ gpgcheck=1
+$ gpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/azure-cli.repo
+$ sudo yum install -y azure-cli
+```
 ### JSON processor
 
 **MacOS**
@@ -205,12 +248,6 @@ sudo apt-get install jq
 - The total amount of vCPU available in an Azure region is determined by the subscription itself.
 - When deploying, it is essential to ensure that there is enough vCPU available within your subscription to provision the node type and count specified.
   
-### Pre-requisite healthcheck
-
-```
-./scripts/healthchecks/pre_requisite_healtcheck.sh
-
-```
 
 ### Inputs
 
@@ -241,6 +278,13 @@ git clone https://github.com/k8-proxy/icap-aks-delivery.git
 cd icap-aks-delivery
 git submodule init
 git submodule update
+
+```
+
+### Pre-requisite healthcheck
+
+```
+./scripts/healthchecks/pre_requisite_healtcheck.sh
 
 ```
    
@@ -359,29 +403,29 @@ Note : First 3 values should be same as export values in step 2.4 .env values
 
 - modules/clusters/aks01/variables.tf
 ```
-Change "default" field in location, resource_group , cluster_name, dns_name_01, dns_name_02, dns_name_03
+Change "default" field in: region, resource_group , cluster_name, dns_name_01, dns_name_02, dns_name_03
 
 ```
 
 - modules/clusters/keyvaults/keyvault-ukw/variables.tf
 
 ```
-Change "default" field in location, resource_group , kv_name, icap_dns, mgmt_dns
+Change "default" field in: region, resource_group , kv_name, icap_dns, mgmt_dns
 ```
 
 - modules/clusters/storage-accounts/storage-accounts-ukw/variables.tf
 ```
-Change "default" field in location, resource_group_name
+Change "default" field in: region, resource_group_name
 ```
 
 - scripts/k8s_scripts/create-ns-docker-secret-ukw.sh
 ```
-change vaules of RESOURCE_GROUP,VAULT_NAME
+change vaules of: RESOURCE_GROUP, VAULT_NAME
 ```
 
 - scripts/az-secret-script/create-az-secret.sh
 ```
-change UKW_VAULT and VAULT_NAME
+change values of: UKW_VAULT and VAULT_NAME
 ```
 ### 3 Creating SSL Certs
 
