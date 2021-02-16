@@ -1,6 +1,5 @@
 #!/bin/bash
 
-mkdir certs
-mkdir certs/mgmt-cert
-mkdir certs/icap-cert
-mkdir certs/file-drop-cert
+mkdir -p certs/mgmt-cert
+mkdir -p certs/icap-cert
+mkdir -p certs/file-drop-cert
