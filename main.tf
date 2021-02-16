@@ -18,11 +18,11 @@ module "create_aks_cluster_file_drop_UKWest" {
 }
 
 # Storage Account Modules
-module "create_storage_account_NEU" {
+module "create_storage_account_UKWest" {
 	source						="./modules/storage-accounts/storage-account-ukw"
 }
 
 # Key Vault Modules
-module "create_key_vault_NEU" {
+module "create_key_vault_UKWest" {
 	source						="./modules/keyvaults/keyvault-ukw"
 }

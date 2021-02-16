@@ -9,10 +9,20 @@ provider "helm" {
     }
 }
 
+resource "azurerm_resource_group" "file_drop_rg" {
+  name     = var.resource_group
+  location = var.region
+
+  tags = {
+    created_by         = "Glasswall Solutions"
+    deployment_version = "1.0.0"
+  }
+}
+
 resource "azurerm_kubernetes_cluster" "file-drop" {
   name                = var.cluster_name
-  location            = var.region
-  resource_group_name = var.resource_group
+  location            = azurerm_resource_group.file_drop_rg.location
+  resource_group_name = azurerm_resource_group.file_drop_rg.name
   dns_prefix          = "${var.cluster_name}-k8s"
 
   default_node_pool {
@@ -52,7 +62,7 @@ resource "helm_release" "file-drop" {
   
   set {
         name  = "nginx.ingress.host"
-        value = var.dns_name_01
+        value = var.file_drop_dns_name_01
     }
 
   depends_on = [ 
@@ -97,5 +107,17 @@ resource "null_resource" "get_kube_context" {
   
   depends_on = [
     azurerm_kubernetes_cluster.file-drop,
+  ]
+}
+
+resource "null_resource" "load_k8_secrets" {
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash ./scripts/k8s_scripts/file-drop-secrets.sh"
+  }
+
+  depends_on = [
+    null_resource.get_kube_context,
   ]
 }
