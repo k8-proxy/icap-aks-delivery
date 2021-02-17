@@ -5,6 +5,7 @@
 # Naming Variables
 RESOURCE_GROUP="gw-icap-aks-delivery-storage"
 VAULT_NAME="aks-delivery-keyvault-01"
+CLUSTER_NAME"gw-icap-aks-delivery-ukw"
 
 # Secret Variables
 DOCKER_SERVER="https://index.docker.io/v1/"
@@ -30,7 +31,7 @@ NAMESPACE01="icap-adaptation"
 NAMESPACE02="icap-ncfs"
 NAMESPACE03="icap-administration"
 
-kubectl config use-context gw-icap-aks-delivery-ukw
+kubectl config use-context $CLUSTER_NAME
 
 # Create namespaces for deployment
 kubectl create ns $NAMESPACE01
