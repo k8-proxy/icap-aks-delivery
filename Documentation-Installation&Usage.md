@@ -1,13 +1,26 @@
-#  Deployment
+#  Deployment of AKS
+- [1. Pre deployment](#1-pre-deployment)
+  * [ICAP Port customization](#icap-port-customization)
+- [2 Setup and Initialise Terraform](#2-setup-and-initialise-terraform)
+- [3. Testing the solution.](#3-testing-the-solution)
+  * [3.1 Testing rebuild](#31-testing-rebuild)
+- [4 Uninstall AKS-Solution](#4-uninstall-aks-solution)
 
-## Table of contents
-- [Deployment](#deployment)
-  * [1 Setup and Initialise Terraform](#1-setup-and-initialise-terraform)
-- [2. Testing the solution.](#2-testing-the-solution)
-  * [2.1 Testing rebuild](#21-testing-rebuild)
-- [3 Uninstall AKS-Solution](#3-uninstall-aks-solution)
+
+## 1. Pre deployment
+
+### ICAP Port customization
+- By default icap-server will run on port 1344 for SSL and 1345 for TLS
+- If you want to customize the above port, please follow below procedure
+```
+vim terraform.tfvars
+```
+- Edit variables `icap_port` and `icap_tlsport` according to requirement and Save it.
+
+Note : Please avoide port 80, 443 since this will be used for file-drop UI.
+
     
-### 1 Setup and Initialise Terraform
+## 2 Setup and Initialise Terraform
 
 - Next you'll need to use the following:
 ```
@@ -33,9 +46,9 @@ Enter a value:
 Enter "yes"
 ```
 
-## 2. Testing the solution.
+## 3. Testing the solution.
 
-### 2.1 Testing rebuild 
+### 3.1 Testing rebuild 
 
 Run ICAP client locally
 
@@ -87,7 +100,7 @@ Run ICAP client locally
 6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
 7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
 
-### 3 Uninstall AKS-Solution
+### 4 Uninstall AKS-Solution
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
@@ -96,4 +109,4 @@ Run ICAP client locally
 ```
 ./scripts/terraform-scripts/uninstall_icap_aks_setup.sh
 ```
-[Go to top](#Deployment)
+[Go to top](#Deployment-of-AKS)
