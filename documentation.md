@@ -1,39 +1,29 @@
-# Instructions
-<!--
-## Table of contents
-
-- [Instructions](#instructions)
-  * [1. Pre-requisites](#1-pre-requisites)
-    + [1.1 Installation of Pre-requisites](#11-installation-of-pre-requisites)
-    + [Terraform install](#terraform-install)
-    + [Kubectl install](#kubectl-install)
-    + [Open SSL](#open-ssl)
-    + [JSON processor (jq)](#json-processor)
-    + [Git install](#git-install)
-  * [2. Usage](#2-usage)
-    + [2.1 Clone Repo](#21-clone-repo)
-    + [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
-    + [2.3 Create azure initial setup](#23-create-azure-initial-setup)
-    + [2.4 Create terraform service principal](#24-create-terraform-service-principal)
-    + [2.5 Add Secrets to main KeyVault](#25-add-secrets-to-main-keyvault)
-    + [2.6 Add Terraform Backend Key to Environment](#26-add-terraform-backend-key-to-environment)
-    + [2.7 File Modifications](#27-file-modifications)
-  * [3. Deployment](#3-deployment)
-    + [3.1 Setup and Initialise Terraform](#31-setup-and-initialise-terraform)
-    + [3.2 Switch Context](#32-switch-context)
-    + [3.3 Loading Secrets into key vault.](#33-loading-secrets-into-key-vault)
-    + [3.4 Creating SSL Certs](#34-creating-ssl-certs)
-    + [3.5 Create Namespaces and Secrets.](#35-create-namespaces-and-secrets)
-    + [3.6 Guide to Setup ArgoCD](#36-guide-to-setup-argocd)
-    + [3.7 Deploy Using ArgoCD](#37-deploy-using-argocd)
-  * [4. Sync an ArgoCD App](#4-sync-an-argocd-app)
-    + [4.1 Sync From CLI](#41-sync-from-cli)
-    + [4.2 Sync From UI](#42-sync-from-ui)
-  * [5. Testing the solution.](#5-testing-the-solution)
-    + [5.1 Healthcheck](#51-healthcheck)
-    + [5.2 Testing rebuild](#52-testing-rebuild)
-    + [6 Uninstall AKS-Solution.](#6-uninstall-aks-solution)
--->
+# Instructions on Installation and setting up the environment
+- [1. Pre-requisites](#1-pre-requisites)
+  * [1.1 Installation of Pre-requisites](#11-installation-of-pre-requisites)
+  * [Terraform install](#terraform-install)
+  * [Kubectl install](#kubectl-install)
+  * [Helm install](#helm-install)
+  * [Open SSL](#open-ssl)
+  * [Azure CLI](#azure-cli)
+  * [JSON processor](#json-processor)
+  * [Azure Subscription Pre-requisite](#azure-subscription-pre-requisite)
+  * [Git](#git)
+  * [Azure Subscription Pre Requisite](#azure-subscription-pre-requisite)
+  * [Inputs](#inputs)
+- [2. Usage](#2-usage)
+  * [2.1 Clone Repo.](#21-clone-repo)
+  * [Pre-requisite healthcheck.](#pre-requisite-healthcheck)
+  * [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
+  * [2.3. Add required credentails.](#23-add-required-credentails)
+  * [2.4 Create azure initial setup](#24-create-azure-initial-setup)
+  * [2.5 Add Terraform Backend Key to Environment](#25-add-terraform-backend-key-to-environment)
+  * [2.6 Azure setup Healthcheck](#26-azure-setup-healthcheck)
+  * [2.7 Add Secrets to main KeyVault](#27-add-secrets-to-main-keyvault)
+  * [2.8 File Modifications](#28-file-modifications)
+- [3 Creating SSL Certs](#3-creating-ssl-certs)
+    + [Self signed quick start](#self-signed-quick-start)
+    + [Customer Certificates](#customer-certificates)
 
 ## 1. Pre-requisites
 - Terraform 
@@ -63,13 +53,13 @@
 
 **MacOS**
 
-- Install terraform by running
+1. Install terraform by running
 
     ```
     brew install terraform
     ```
 
-- Confirm version
+2. Confirm version
 
     ```
     terraform -version
@@ -172,7 +162,7 @@ brew install helm
 **Windows**
 - Run the following command with chocolatey
 ```
-brew install helm
+choco install kubernetes-helm
 ```
 
 **Linux**
@@ -185,7 +175,7 @@ chmod 700 get_helm.sh
 ### Open SSL 
 
 **MacOS**  
-
+- Run the following command
 ```
 brew info openssl
 
@@ -198,7 +188,7 @@ Follow the instructions [here](https://www.xolphin.com/support/OpenSSL/OpenSSL_-
 
 **Linux**
 
-OpenSSL has been installed from source on Linux Ubuntu and CentOS
+- Run the following commands
 ```
  #check openssl version
  openssl version
@@ -219,6 +209,7 @@ OpenSSL has been installed from source on Linux Ubuntu and CentOS
 ### Azure CLI
 
 **MacOS**
+- Copy and paste the following command
 ```
 brew update && brew install azure-cli
 ```
@@ -242,17 +233,19 @@ $ az --version
 ### JSON processor
 
 **MacOS**
+- Run
 ```
 brew install jq
 
 ```
 **Windows**
-
+- Run
 ```
 chocolatey install jq
 ```
 
 **Linux**
+- Run
 ```
 wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
 chmod +x ./jq
@@ -261,22 +254,22 @@ sudo cp jq /usr/bin
 jq --version
 ```
 
-### Azure Subscription Pre-requisite
-=======
 ### GIT
 
 **MacOS**
+- Run
 ```
 brew install git
 
 ```
 **Windows**
-
+- Run
 ```
 chocolatey install git
 ```
 
 **Linux**
+- Run
 ```
 sudo yum install -y git
 # check version
@@ -351,7 +344,7 @@ az account show
 
 ### 2.3. Add required credentails.
 
-- All the required secrets and variables are listed in  are ".env.example".
+- All the required secrets and variables are listed in ".env.example".
 
 - Run below
 
@@ -360,8 +353,7 @@ cp .env.example .env
 vim .env
 ```
 
-- Edit all the required details. 
-- Run
+- Edit all the required details and then run
 ```
 export $(xargs<.env)
 ```
@@ -473,106 +465,5 @@ mkdir -p certs/file-drop-cert
 
 - Set flag `enable_cutomser_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
 
-## 4. Pre deployment
 
-### ICAP Port customization
-- By default icap-server will run on port 1344 for SSL and 1345 for TLS
-- If you want to customize the above port, please follow below procedure
-```
-vim terraform.tfvars
-```
-- Edit variables `icap_port` and `icap_tlsport` according to requirement and Save it.
-
-Note : Please avoide port 80, 443 since this will be used for file-drop UI.
-
-## 5. Deployment
-### 5.1 Setup and Initialise Terraform
-
-- Next you'll need to use the following:
-```
-terraform init -backend-config="backend.tfvars" 
-
-```
-- Next run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
-```
-terraform validate
-#Success! The configuration is valid.
-
-terraform plan
-```
-
-- Now you're ready to run apply and it should give you the following output
-``` 
-terraform apply 
-
-Do you want to perform these actions?
-Terraform will perform the actions described above.
-Only 'yes' will be accepted to approve.
-Enter a value: 
-Enter "yes"
-```
-
-## 6. Testing the solution.
-
-### 6.1 Testing rebuild 
-
-Run ICAP client locally
-
-1. Find DNS of the ICAP-Server and Management UI
-
-- Icap-server
-
-    Run below command and 
-    ```
-     kubectl get service  --all-namespaces
-    ```
-
-    - ICAP-server : EXTERNAL-IP of frontend-icap-lb 
-    
-- File-Drop    
-
- Run below command and 
-    ```
-     kubectl get service  --all-namespaces
-    ```
-
-    - File-Drop  : EXTERNAL-IP of file-drop-lb   
-
-- Management-ui: 
-        ```
-        kubectl get ingress -A
-        ```
-2. Run:
-
-        git clone https://github.com/k8-proxy/icap-client-docker.git
-    
-3. Run: 
-
-        cd icap-client-docker/
-        sudo docker build -t c-icap-client .
-    
-4. Run: 
-       
-        ./icap-client.sh {IP of frontend-icap-lb} JS_Siemens.pdf
-        
-        (check Respond Headers: HTTP/1.0 200 OK to verify rebuild is successful)
-    
-5. Run: 
-
-        open rebuilt/rebuilt-file.pdf  
-    
-       (and notice "Glasswall Proccessed" watermark on the right hand side of the page)
-    
-6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
-7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
-
-### 7 Uninstall AKS-Solution
-
-#### **Only if you want to uninstall AKS solution completely from your system, then proceed**
-
-- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principal.
-
-```
-./scripts/terraform-scripts/uninstall_icap_aks_setup.sh
-```
-<!--[Go to top](#instructions)-->
+[Go to top](#instructions-on-installation-and-setting-up-the-environment)
