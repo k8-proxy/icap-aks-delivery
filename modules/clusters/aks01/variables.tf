@@ -172,3 +172,17 @@ variable "chart_path06" {
   type        = string
   default 	  = "./charts/icap-infrastructure/ncfs"
 }
+
+
+variable "storage_resource" {
+  description = "This is storage_resource"
+  type        = string
+
+}
+
+variable "kv_vault_name" {
+  description = "This is kv_vault_name"
+  type        = string
+
+}
+

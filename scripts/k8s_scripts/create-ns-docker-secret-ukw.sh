@@ -3,9 +3,9 @@
 # This script will run create the neccesary namespaces and add the docker service account to the required namespace.
 
 # Naming Variables
-RESOURCE_GROUP="gw-icap-aks-delivery-storage"
-VAULT_NAME="aks-delivery-keyvault-01"
-CLUSTER_NAME"gw-icap-aks-delivery-ukw"
+RESOURCE_GROUP=$1
+VAULT_NAME=$2
+CLUSTER_NAME=$3
 
 # Secret Variables
 DOCKER_SERVER="https://index.docker.io/v1/"

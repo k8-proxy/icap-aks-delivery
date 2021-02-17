@@ -107,6 +107,8 @@ resource "null_resource" "create_dirs" {
 
 resource "null_resource" "create_icap_certs" {
 
+ count = var.enable_cutomser_cert ? 0 : 1
+
  provisioner "local-exec" {
 
     command = "/bin/bash ./scripts/gen-certs/icap-gen-certs.sh ${var.icap_dns}"
@@ -118,6 +120,7 @@ resource "null_resource" "create_icap_certs" {
 }
 
 resource "null_resource" "create_mgmt_certs" {
+ count = var.enable_cutomser_cert ? 0 : 1
 
  provisioner "local-exec" {
 
@@ -130,6 +133,8 @@ resource "null_resource" "create_mgmt_certs" {
 }
 
 resource "null_resource" "create_file_drop_certs" {
+
+ count = var.enable_cutomser_cert ? 0 : 1
 
  provisioner "local-exec" {
 
@@ -145,7 +150,7 @@ resource "null_resource" "load_secrets" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash ./scripts/az-secret-script/create-az-secret.sh"
+    command = "/bin/bash ./scripts/az-secret-script/create-az-secret.sh ${var.kv_name}"
   }
 
   depends_on = [ 

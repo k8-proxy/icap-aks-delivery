@@ -114,7 +114,7 @@ resource "null_resource" "load_k8_secrets" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash ./scripts/k8s_scripts/file-drop-secrets.sh"
+    command = "/bin/bash ./scripts/k8s_scripts/file-drop-secrets.sh ${var.cluster_name}"
   }
 
   depends_on = [

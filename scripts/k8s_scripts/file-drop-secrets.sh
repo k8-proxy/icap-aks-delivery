@@ -1,5 +1,5 @@
 #!/bin/bash
-CLUSTER_NAME"gw-icap-aks-file-drop"
+CLUSTER_NAME=$1
 NAMESPACE01="icap-filedrop"
 NAMESPACE02="ingress-nginx"
 
