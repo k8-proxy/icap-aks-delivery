@@ -10,7 +10,7 @@
   * [Git](#git)
   * [Azure Subscription Pre Requisite](#azure-subscription-pre-requisite)
   * [Inputs](#inputs)
-- [2. Usage](#2-usage)
+- [2. Set up the environment](#2-set-up-the-environment)
   * [2.1 Clone Repo.](#21-clone-repo)
   * [Pre-requisite healthcheck.](#pre-requisite-healthcheck)
   * [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
@@ -308,7 +308,7 @@ These are the variables required for the deployment
 | VAULT_NAME | Vault Name for initial azure setup | `string` | n/a | yes |
 | key | state key name for terraform | `string` | n/a | yes |
 
-## 2. Usage
+## 2. Set up the environment
 
 ### 2.1 Clone Repo.
 
