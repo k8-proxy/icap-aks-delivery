@@ -1,4 +1,4 @@
-# Instructions on Installation and setting up the environment
+# Installation and setting up the environment
 - [1. Pre-requisites](#1-pre-requisites)
   * [1.1 Installation of Pre-requisites](#11-installation-of-pre-requisites)
   * [Terraform install](#terraform-install)
@@ -465,4 +465,4 @@ mkdir -p certs/file-drop-cert
 - Set flag `enable_cutomser_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
 
 
-[Go to top](#instructions-on-installation-and-setting-up-the-environment)
+[Go to top](#installation-and-setting-up-the-environment)
