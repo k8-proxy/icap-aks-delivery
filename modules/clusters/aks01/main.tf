@@ -111,12 +111,12 @@ resource "helm_release" "administration" {
 
   set {
         name  = "managementui.ingress.host"
-        value = var.dns_name_02
+        value = var.dns_name_04
     }
 
   set {
         name  = "identitymanagementservice.configuration.ManagementUIEndpoint"
-        value = var.dns_name_03
+        value = var.dns_name_04
     }
 
   depends_on = [ 
@@ -197,7 +197,7 @@ resource "null_resource" "load_k8_secrets" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash ./scripts/k8s_scripts/create-ns-docker-secret-ukw.sh"
+    command = "/bin/bash ./scripts/k8s_scripts/create-ns-docker-secret-ukw.sh ${var.storage_resource} ${var.kv_vault_name} ${var.cluster_name}"
   }
 
   depends_on = [

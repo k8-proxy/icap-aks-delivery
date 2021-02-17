@@ -97,32 +97,66 @@ resource "azurerm_key_vault" "keyvault" {
   }
 }
 
+resource "null_resource" "create_dirs" {
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash ./scripts/gen-certs/create-dirs.sh"
+  }
+}
+
 resource "null_resource" "create_icap_certs" {
+
+ count = var.enable_cutomser_cert ? 0 : 1
 
  provisioner "local-exec" {
 
     command = "/bin/bash ./scripts/gen-certs/icap-gen-certs.sh ${var.icap_dns}"
   }
+
+  depends_on = [ 
+    null_resource.create_dirs,
+   ]
 }
 
 resource "null_resource" "create_mgmt_certs" {
+ count = var.enable_cutomser_cert ? 0 : 1
 
  provisioner "local-exec" {
 
     command = "/bin/bash ./scripts/gen-certs/mgmt-gen-certs.sh ${var.mgmt_dns}"
   }
+  
+  depends_on = [ 
+    null_resource.create_dirs,
+   ]
+}
+
+resource "null_resource" "create_file_drop_certs" {
+
+ count = var.enable_cutomser_cert ? 0 : 1
+
+ provisioner "local-exec" {
+
+    command = "/bin/bash ./scripts/gen-certs/file-drop-certs.sh ${var.file_drop_dns}"
+  }
+  
+  depends_on = [ 
+    null_resource.create_dirs,
+   ]
 }
 
 resource "null_resource" "load_secrets" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash ./scripts/az-secret-script/create-az-secret.sh"
+    command = "/bin/bash ./scripts/az-secret-script/create-az-secret.sh ${var.kv_name}"
   }
 
   depends_on = [ 
-    null_resource.create_icap_certs,
     null_resource.create_mgmt_certs,
+    null_resource.create_icap_certs,
+    null_resource.create_file_drop_certs,
     azurerm_key_vault.keyvault,
    ]
 }

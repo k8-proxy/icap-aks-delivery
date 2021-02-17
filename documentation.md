@@ -44,7 +44,7 @@
 - JSON processor (jq)
 - Microsoft account
 - Azure Subscription
-- Dockerhub account
+- Dockerhub account which is configured by GW team. 
 
 | Name | Version |
 |------|---------|
@@ -180,6 +180,7 @@ sudo apt-get install apt-transport-https --yes
 echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 sudo apt-get update
 sudo apt-get install helm
+
 ```
 ### Open SSL 
 
@@ -261,8 +262,6 @@ These are the variables required for the deployment
 | DH_SA_PASSWORD| Dockerhub password | `string` | n/a | yes |
 | SmtpUser | SMTP Username | `string` | n/a | yes |
 | SmtpPass | SMTP Password | `string` | n/a | yes |
-| client\_id | Service Principal ClientID | `string` | n/a | yes |
-| client\_secret | Service Principal Secret | `string` | n/a | yes |
 | RESOURCE_GROUP_NAME | Resource group name for initial azure setup | `string` | n/a | yes |
 | STORAGE_ACCOUNT_NAME | Storage account name for initial azure setup | `string` | n/a | yes |
 | CONTAINER_NAME | Container Name for initial azure setup | `string` | n/a | yes |
@@ -280,7 +279,6 @@ git submodule init
 git submodule update
 
 ```
-
 ### Pre-requisite healthcheck
 
 ```
@@ -302,35 +300,8 @@ az account set -s <subscription ID>
 az account show
 
 ```
-### 2.3 Create terraform service principal
 
-**PLEASE NOTE THIS ONLY NEEDS TO BE DONE ONCE FOR A SINGLE SUBSCRIPTION**
-
-This next part will create a service principal, with the least amount of privileges, to perform the AKS Deployment.
-
-```
-./scripts/terraform-scripts/createTerraormServicePrinciple.sh
-```
-
-- When prompted `The provider.tf file exists.  Do you want to overwrite? ` , Enter `Y`
-
-- The output will be similar to this. Keep a copy of `client id` and `client secret`
-
-```
-{
-  "appId": "xyz",
-  "displayName": "xyz",
-  "name": "xyz",
-  "password": "xyz",
-  "tenant": "xyz"
-}
-subscription_id = "xyz"
-client_id       = "xyz"
-client_secret   = "xyz"
-tenant_id       = "xyz"
-
-```
-### 2.4. Add required credentails
+### 2.3. Add required credentails
 
 - All the required secrets and variables are listed in  are ".env.example"
 
@@ -346,7 +317,7 @@ vim .env
 ```
 export $(xargs<.env)
 ```
-### 2.5 Create azure initial setup
+### 2.4 Create azure initial setup
 
 - Run below script
 
@@ -355,7 +326,7 @@ export $(xargs<.env)
 
 ```
 
-### 2.6 Add Terraform Backend Key to Environment
+### 2.5 Add Terraform Backend Key to Environment
 
 - Check you have access to keyvault using below command
 ```
@@ -372,14 +343,14 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 echo $ARM_ACCESS_KEY
 ```
 
-### 2.7 Azure setup Healthcheck 
+### 2.6 Azure setup Healthcheck 
 
 ```
 ./scripts/healthchecks/azure_setup_healthcheck.sh
 
 ```
 
-### 2.8 Add Secrets to main KeyVault 
+### 2.7 Add Secrets to main KeyVault 
 
 - Run below script
 
@@ -387,98 +358,98 @@ echo $ARM_ACCESS_KEY
 ./scripts/terraform-scripts/load_keyvault_secrets.sh
 ```
 
-### 2.9 File Modifications
+### 2.8 File Modifications
 
 - Currently below needs modifications
 
-- main.tf
+- backend.tfvars - this will be used as azure backend to store deployment state 
 ```
 resource_group_name  = "gw-icap-tfstate"
 storage_account_name = "tfstate263sam"
 container_name       = "gw-icap-tfstate"
-key = "test1.upwork.terraform.tfstate"
+key = "aks.delivery.terraform.tfstate"
 
-Note : First 3 values should be same as export values in step 2.4 .env values 
+Note : First 3 values should be same as export values in .env file of step 2.3 
 ```
-
-- modules/clusters/aks01/variables.tf
-```
-Change "default" field in: region, resource_group , cluster_name, dns_name_01, dns_name_02, dns_name_03
+- terraform.tfvars
 
 ```
+# give a valid region name
 
-- modules/clusters/keyvaults/keyvault-ukw/variables.tf
+azure_region="UKWEST"
 
-```
-Change "default" field in: region, resource_group , kv_name, icap_dns, mgmt_dns
-```
+# give a short suffix, maximum of 3 character.
+suffix="stg"
 
-- modules/clusters/storage-accounts/storage-accounts-ukw/variables.tf
-```
-Change "default" field in: region, resource_group_name
 ```
 
-- scripts/k8s_scripts/create-ns-docker-secret-ukw.sh
-```
-change vaules of: RESOURCE_GROUP, VAULT_NAME
-```
-
-- scripts/az-secret-script/create-az-secret.sh
-```
-change values of: UKW_VAULT and VAULT_NAME
-```
 ### 3 Creating SSL Certs
-
-
-```bash
-
-mkdir -p certs/icap-cert
-
-mkdir -p certs/mgmt-cert
-```
 
 #### Self signed quick start
 
 **For evaluation use we have provided scripts to generate and apply self signed certificates**
 
-- Now the directories for the certs have been created, you can now create the certs using the following scripts:
-
-```bash
-./scripts/gen-certs/icap-gen-certs.sh <icap_dns>
+- Open terraform.tfvars
 ```
+vim terraform.tfvars
 
-- Management-UI
-```bash
-./scripts/gen-certs/mgmt-gen-certs.sh <mgmt_dns>
 ```
+- Set flag `enable_cutomser_cert` as `false`. The self signed cdertificate will be generated and configured automatically during deployment.
 
 #### Customer Certificates
 
 **If you have your own certificates for production use then follow below steps**
+- Run below
+```
+mkdir -p certs/mgmt-cert
+mkdir -p certs/icap-cert
+mkdir -p certs/file-drop-cert
+```
+- There will be three set of certificates needed. Please follow below procedure 
 
-- There will be two set of certificate, one for `icap-client` domain and other for `management-ui` domain
+- Replace suffix in below domain names while generating actual certificates for domains. You should be having three set of certificates once generating certificates.
 
-- Rename `.crt` file to certificate.crt and `.key` file to `tls.key` for both domain certificates
+|  Name         | Domain Name |
+|------         |---------    |
+| icap-client   | icap-client-ukw-${suffix}.ukwest.cloudapp.azure.com   |
+| management-ui | management-ui-ukw-${suffix}.ukwest.cloudapp.azure.com |
+| file-drop     | file-drop-ukw-${suffix}.ukwest.cloudapp.azure.com     |
+
+- Rename `.crt` file to certificate.crt and `.key` file to `tls.key` for all domain certificates
 
 - Copy `icap-client certificates` to `certs/icap-cert`
 
+- Copy `file-drop certificates` to  `certs/file-drop-cert`
+
 - Copy `management-ui certificates` to  `certs/mgmt-cert`
 
+- Set flag `enable_cutomser_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
+
 ## 4. Pre deployment
+
+### ICAP Port customization
+- By default icap-server will run on port 1344 for SSL and 1345 for TLS
+- If you want to customize the above port, please follow below procedure
+```
+vim terraform.tfvars
+```
+- Edit variables `icap_port` and `icap_tlsport` according to requirement and Save it.
+
+Note : Please avoide port 80, 443 since this will be used for file-drop UI.
 
 ## 5. Deployment
 ### 5.1 Setup and Initialise Terraform
 
 - Next you'll need to use the following:
 ```
-terraform init
+terraform init -backend-config="backend.tfvars" 
+
 ```
 - Next run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
 ```
 terraform validate
 #Success! The configuration is valid.
 
-terraform refresh
 terraform plan
 ```
 

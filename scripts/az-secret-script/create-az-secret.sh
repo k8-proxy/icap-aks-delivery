@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Vault Variables
-UKW_VAULT="aks-delivery-keyvault-01"
+UKW_VAULT=$1
+TF_STATE_VAULT=$VAULT_NAME
 
 # Secret Name Variables
 SECRET_NAME01="DH-SA-USERNAME"
@@ -18,17 +19,17 @@ SMTP_SECRET04="SmtpPass"
 SMTP_SECRET05="SmtpSecureSocketOptions"
 
 # Secret Values Variables
-MANAGEMENT_ENDPOINT=$(az keyvault secret show --name manage-endpoint --vault-name gw-tfstate-Vault --query value -o tsv)
-DOCKER_USERNAME=$(az keyvault secret show --name DH-SA-USERNAME --vault-name gw-tfstate-Vault --query value -o tsv)
-DOCKER_PASSWORD=$(az keyvault secret show --name DH-SA-PASSWORD --vault-name gw-tfstate-Vault --query value -o tsv)
-TOKEN_USERNAME=$(az keyvault secret show --name token-username --vault-name gw-tfstate-Vault --query value -o tsv)
+MANAGEMENT_ENDPOINT=$(az keyvault secret show --name manage-endpoint --vault-name $TF_STATE_VAULT --query value -o tsv)
+DOCKER_USERNAME=$(az keyvault secret show --name DH-SA-USERNAME --vault-name $TF_STATE_VAULT --query value -o tsv)
+DOCKER_PASSWORD=$(az keyvault secret show --name DH-SA-PASSWORD --vault-name $TF_STATE_VAULT --query value -o tsv)
+TOKEN_USERNAME=$(az keyvault secret show --name token-username --vault-name $TF_STATE_VAULT --query value -o tsv)
 TOKEN_PASSWORD=$(head /dev/urandom | base64 | head -c32)
 TOKEN_SECRET=$(head /dev/urandom | base64 | head -c32)
 ENCRYPTION_SECRET=$(head /dev/urandom | base64 | head -c32)
 SMTPHOST="smtp.office365.com"
 SMTPPORT="587"
-SMTPUSER=$(az keyvault secret show --name SmtpUser --vault-name gw-tfstate-Vault --query value -o tsv)
-SMTPPASS=$(az keyvault secret show --name SmtpPass --vault-name gw-tfstate-Vault --query value -o tsv)
+SMTPUSER=$(az keyvault secret show --name SmtpUser --vault-name $TF_STATE_VAULT --query value -o tsv)
+SMTPPASS=$(az keyvault secret show --name SmtpPass --vault-name $TF_STATE_VAULT --query value -o tsv)
 SMTPSECURESOCKETOPTIONS="StartTls"
 
 # AZ Command to set Secrets
