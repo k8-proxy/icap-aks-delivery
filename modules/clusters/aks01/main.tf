@@ -19,6 +19,19 @@ resource "azurerm_resource_group" "resource_group" {
   }
 }
 
+# resource "azurerm_public_ip" "nginx-public-ip" {
+#   name                = "nginx-public-ip-1"
+#   resource_group_name = azurerm_resource_group.resource_group.name
+#   location            = azurerm_resource_group.resource_group.location
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+
+#   tags = {
+#     created_by         = "Glasswall Solutions"
+#     deployment_version = "1.0.0"
+#   }
+# }
+
 resource "azurerm_kubernetes_cluster" "icap-deploy" {
   name                = var.cluster_name
   location            = azurerm_resource_group.resource_group.location
@@ -89,6 +102,11 @@ resource "helm_release" "ingress-nginx" {
   chart            = var.chart_repo03
   wait             = true
   cleanup_on_fail  = true
+
+  set {
+        name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-dns-label-name"
+        value = var.a_record_01
+    }
 
   depends_on = [ 
     azurerm_kubernetes_cluster.icap-deploy,
@@ -185,7 +203,7 @@ resource "null_resource" "get_kube_context" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
+    command = "az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
   }
   
   depends_on = [

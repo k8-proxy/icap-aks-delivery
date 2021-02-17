@@ -93,6 +93,11 @@ resource "helm_release" "ingress-nginx" {
   wait             = true
   cleanup_on_fail  = true
 
+  set {
+        name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-dns-label-name"
+        value = var.a_record_02
+    }
+
   depends_on = [ 
     azurerm_kubernetes_cluster.file-drop,
    ]
@@ -102,7 +107,7 @@ resource "null_resource" "get_kube_context" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
+    command = "az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
   }
   
   depends_on = [

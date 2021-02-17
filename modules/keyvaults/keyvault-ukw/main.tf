@@ -107,7 +107,7 @@ resource "null_resource" "create_dirs" {
 
 resource "null_resource" "create_icap_certs" {
 
- count = var.enable_cutomser_cert ? 0 : 1
+ count = var.enable_customer_cert ? 0 : 1
 
  provisioner "local-exec" {
 

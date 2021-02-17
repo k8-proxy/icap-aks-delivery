@@ -132,7 +132,13 @@ variable "chart_path04" {
 variable "dns_name_04" {
   description = "DNS name for Management-UI"
   type = string
-  default = "management-ui-ukw.ukwest.cloudapp.azure.com"
+  default = "management-ui.ukwest.cloudapp.azure.com"
+}
+
+variable "a_record_01" {
+  description = "A record for Management-UI"
+  type = string
+  default = "management-ui"
 }
 
 ## Rabbitmq-Operator Chart
