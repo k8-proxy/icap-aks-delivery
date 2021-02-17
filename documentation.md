@@ -369,7 +369,7 @@ storage_account_name = "tfstate263sam"
 container_name       = "gw-icap-tfstate"
 key = "aks.delivery.terraform.tfstate"
 
-Note : First 3 values should be same as export values in step 2.4 .env 
+Note : First 3 values should be same as export values in .env file of step 2.3 
 ```
 - terraform.tfvars
 
