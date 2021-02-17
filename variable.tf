@@ -8,6 +8,11 @@ variable "suffix" {
   type        = string
 }
 
+variable "domain" {
+  description = "This is a domain of organization"
+  type        = string
+}
+
 variable "icap_port" {
     description = "The Azure backend vault name"
     type = number
