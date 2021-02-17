@@ -9,6 +9,7 @@
     + [Kubectl install](#kubectl-install)
     + [Open SSL](#open-ssl)
     + [JSON processor (jq)](#json-processor)
+    + [Git install](#git-install)
   * [2. Usage](#2-usage)
     + [2.1 Clone Repo](#21-clone-repo)
     + [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
@@ -42,6 +43,7 @@
 - Azure CLI 
 - Bash terminal or terminal able to execute bash scripts
 - JSON processor (jq)
+- Git
 - Microsoft account
 - Azure Subscription
 - Dockerhub account which is configured by GW team. 
@@ -54,6 +56,7 @@
 | az cli | ~> 2.17 |
 | jq | ~> 1.6 |
 | Openssl | ~> 1.1 |
+| git | ~> 2.27.0 |
 
 ### 1.1 Installation of Pre-requisites
 ### Terraform install
@@ -95,8 +98,8 @@
 
 1. Copy and paste the following command:
     ```
-            $ sudo tall -y yum-utils
-            $ sudo yum-config-manager --add-repo      	https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+            $ sudo yum install -y yum-utils
+            $ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
             $ sudo yum -y install terraform
      ```
 2. Confirm installation was successful by verifying its version .
@@ -175,12 +178,9 @@ brew install helm
 **Linux**
 - Copy and paste the following commands
 ```
-curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
-sudo apt-get install apt-transport-https --yes
-echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt-get update
-sudo apt-get install helm
-
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
 ```
 ### Open SSL 
 
@@ -199,6 +199,22 @@ Follow the instructions [here](https://www.xolphin.com/support/OpenSSL/OpenSSL_-
 **Linux**
 
 OpenSSL has been installed from source on Linux Ubuntu and CentOS
+```
+ #check openssl version
+ openssl version
+ #if version is < 1.1.1h run below steps
+ cd ~
+ wget https://www.openssl.org/source/openssl-1.1.1h.tar.gz
+ tar -xzf openssl-1.1.1h.tar.gz
+ cd openssl-1.1.1h
+ ./config
+ sudo yum install -y make
+ sudo yum install -y gcc
+ make
+ sudo make install
+ sudo rm -i -y /usr/bin/openssl
+ sudo ln -s /usr/local/bin/openssl /usr/bin/openssl
+ ```
 
 ### Azure CLI
 
@@ -211,14 +227,17 @@ brew update && brew install azure-cli
 
 **Linux**
 - Copy and paste the following commands
-```$ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+```
+$ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 $ echo -e "[azure-cli]
-$ name=Azure CLI
-$ baseurl=https://packages.microsoft.com/yumrepos/azure-cli
-$ enabled=1
-$ gpgcheck=1
-$ gpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/azure-cli.repo
+name=Azure CLI
+baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/azure-cli.repo
 $ sudo yum install -y azure-cli
+# check version
+$ az --version
 ```
 ### JSON processor
 
@@ -235,13 +254,36 @@ chocolatey install jq
 
 **Linux**
 ```
-sudo apt-get install jq
+wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+chmod +x ./jq
+sudo cp jq /usr/bin
+# check version
+jq --version
 ```
 
+### GIT
+
+**MacOS**
+```
+brew install git
+
+```
+**Windows**
+
+```
+chocolatey install git
+```
+
+**Linux**
+```
+sudo yum install -y git
+# check version
+git --version
+```
 ### Azure Subscription Pre Requisite
 
-- There should be atleast one subscription assosiated to azure account
-- The subscription should have **Controbutor** role allows a user to create and manage virtual machines
+- There should be atleast one subscription associated to azure account
+- The subscription should have **Contributor** role which allows user to create and manage virtual machines
 - This documentation will provision a managed Azure Kubernetes (AKS) cluster on which to deploy the application. 
 - This cluster has configured to auto scaling and  runs on a minimum of 4 nodes and maximum of 100 nodes.
 - The specification of the nodes is defined in the `modules/aks01` configuration of this deployment
