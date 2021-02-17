@@ -88,4 +88,4 @@ Run ICAP client locally
 ```
 ./scripts/terraform-scripts/uninstall_icap_aks_setup.sh
 ```
-[Go to top](#-5-Deployment)
+[Go to top](#5-Deployment)
