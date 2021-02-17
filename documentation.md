@@ -44,7 +44,7 @@
 - JSON processor (jq)
 - Microsoft account
 - Azure Subscription
-- Dockerhub account which is configured by GW team. 
+- Dockerhub account 
 
 | Name | Version |
 |------|---------|
