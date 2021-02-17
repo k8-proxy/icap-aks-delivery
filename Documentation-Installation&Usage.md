@@ -1,5 +1,13 @@
-## 5. Deployment
-### 5.1 Setup and Initialise Terraform
+#  Deployment
+
+## Table of contents
+- [Deployment](#deployment)
+  * [1 Setup and Initialise Terraform](#1-setup-and-initialise-terraform)
+- [2. Testing the solution.](#2-testing-the-solution)
+  * [2.1 Testing rebuild](#21-testing-rebuild)
+- [3 Uninstall AKS-Solution](#3-uninstall-aks-solution)
+    
+### 1 Setup and Initialise Terraform
 
 - Next you'll need to use the following:
 ```
@@ -25,9 +33,9 @@ Enter a value:
 Enter "yes"
 ```
 
-## 6. Testing the solution.
+## 2. Testing the solution.
 
-### 6.1 Testing rebuild 
+### 2.1 Testing rebuild 
 
 Run ICAP client locally
 
@@ -79,7 +87,7 @@ Run ICAP client locally
 6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
 7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
 
-### 7 Uninstall AKS-Solution
+### 3 Uninstall AKS-Solution
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
@@ -88,4 +96,4 @@ Run ICAP client locally
 ```
 ./scripts/terraform-scripts/uninstall_icap_aks_setup.sh
 ```
-[Go to top](#5-Deployment)
+[Go to top](#Deployment)
