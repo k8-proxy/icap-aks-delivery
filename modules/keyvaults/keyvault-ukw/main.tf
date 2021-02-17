@@ -153,10 +153,7 @@ resource "null_resource" "load_secrets" {
     command = "/bin/bash ./scripts/az-secret-script/create-az-secret.sh ${var.kv_name}"
   }
 
-  depends_on = [ 
-    null_resource.create_mgmt_certs,
-    null_resource.create_icap_certs,
-    null_resource.create_file_drop_certs,
+  depends_on = [
     azurerm_key_vault.keyvault,
    ]
 }
