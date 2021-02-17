@@ -19,19 +19,6 @@ resource "azurerm_resource_group" "resource_group" {
   }
 }
 
-# resource "azurerm_public_ip" "nginx-public-ip" {
-#   name                = "nginx-public-ip-1"
-#   resource_group_name = azurerm_resource_group.resource_group.name
-#   location            = azurerm_resource_group.resource_group.location
-#   allocation_method   = "Static"
-#   sku                 = "Standard"
-
-#   tags = {
-#     created_by         = "Glasswall Solutions"
-#     deployment_version = "1.0.0"
-#   }
-# }
-
 resource "azurerm_kubernetes_cluster" "icap-deploy" {
   name                = var.cluster_name
   location            = azurerm_resource_group.resource_group.location

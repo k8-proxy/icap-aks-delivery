@@ -39,7 +39,3 @@ output "kube_config" {
     value = azurerm_kubernetes_cluster.icap-deploy.kube_config_raw
     sensitive = true
 }
-
-# output "nginx_public_ip" {
-#     value = azurerm_public_ip.publicIp.ipAddress
-# }
