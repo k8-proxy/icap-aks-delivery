@@ -185,7 +185,7 @@ resource "null_resource" "get_kube_context" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
+    command = "az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
   }
   
   depends_on = [
