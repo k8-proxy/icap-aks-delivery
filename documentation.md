@@ -46,7 +46,7 @@
 - Git
 - Microsoft account
 - Azure Subscription
-- Dockerhub account which is configured by GW team. 
+- Dockerhub account 
 
 | Name | Version |
 |------|---------|
@@ -102,7 +102,7 @@
             $ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
             $ sudo yum -y install terraform
      ```
-2. Confirm installation was successful by verifying its version .
+2. Confirm installation was successful by verifying its version.
     ```
             $ terraform --version
             Terraform v0.14.3
@@ -261,6 +261,8 @@ sudo cp jq /usr/bin
 jq --version
 ```
 
+### Azure Subscription Pre-requisite
+=======
 ### GIT
 
 **MacOS**
@@ -281,6 +283,7 @@ sudo yum install -y git
 git --version
 ```
 ### Azure Subscription Pre Requisite
+
 
 - There should be atleast one subscription associated to azure account
 - The subscription should have **Contributor** role which allows user to create and manage virtual machines
@@ -304,6 +307,9 @@ These are the variables required for the deployment
 | DH_SA_PASSWORD| Dockerhub password | `string` | n/a | yes |
 | SmtpUser | SMTP Username | `string` | n/a | yes |
 | SmtpPass | SMTP Password | `string` | n/a | yes |
+| SmtpHost|  SMTP Host | `string` | smtp.office365.com | yes |
+| SmtpPort | SMTP Port | `string` | 587 | yes |
+| SmtpSecureSocketOptions | SMTP Secure Socket Options | `string` | StartTls | yes |
 | RESOURCE_GROUP_NAME | Resource group name for initial azure setup | `string` | n/a | yes |
 | STORAGE_ACCOUNT_NAME | Storage account name for initial azure setup | `string` | n/a | yes |
 | CONTAINER_NAME | Container Name for initial azure setup | `string` | n/a | yes |
@@ -312,7 +318,7 @@ These are the variables required for the deployment
 
 ## 2. Usage
 
-### 2.1 Clone Repo
+### 2.1 Clone Repo.
 
 ```
 git clone https://github.com/k8-proxy/icap-aks-delivery.git
@@ -321,7 +327,7 @@ git submodule init
 git submodule update
 
 ```
-### Pre-requisite healthcheck
+### Pre-requisite healthcheck.
 
 ```
 ./scripts/healthchecks/pre_requisite_healtcheck.sh
@@ -343,9 +349,9 @@ az account show
 
 ```
 
-### 2.3. Add required credentails
+### 2.3. Add required credentails.
 
-- All the required secrets and variables are listed in  are ".env.example"
+- All the required secrets and variables are listed in  are ".env.example".
 
 - Run below
 
@@ -453,9 +459,9 @@ mkdir -p certs/file-drop-cert
 
 |  Name         | Domain Name |
 |------         |---------    |
-| icap-client   | icap-client-ukw-${suffix}.ukwest.cloudapp.azure.com   |
-| management-ui | management-ui-ukw-${suffix}.ukwest.cloudapp.azure.com |
-| file-drop     | file-drop-ukw-${suffix}.ukwest.cloudapp.azure.com     |
+| icap-client   | icap-${suffix}.ukwest.cloudapp.azure.com   |
+| management-ui | management-ui-${suffix}.{domain} |
+| file-drop     | file-drop-${suffix}.{domain}     |
 
 - Rename `.crt` file to certificate.crt and `.key` file to `tls.key` for all domain certificates
 
@@ -522,8 +528,17 @@ Run ICAP client locally
     ```
 
     - ICAP-server : EXTERNAL-IP of frontend-icap-lb 
+    
+- File-Drop    
 
-- Management-ui : 
+ Run below command and 
+    ```
+     kubectl get service  --all-namespaces
+    ```
+
+    - File-Drop  : EXTERNAL-IP of file-drop-lb   
+
+- Management-ui: 
         ```
         kubectl get ingress -A
         ```
@@ -551,13 +566,13 @@ Run ICAP client locally
 6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
 7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
 
-### 7 Uninstall AKS-Solution. 
+### 7 Uninstall AKS-Solution
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
-- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principal. 
+- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principal.
 
 ```
 ./scripts/terraform-scripts/uninstall_icap_aks_setup.sh
 ```
-[Go to top](#instructions)
+<!--[Go to top](#instructions)-->
