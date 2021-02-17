@@ -7,7 +7,6 @@
   * [Open SSL](#open-ssl)
   * [Azure CLI](#azure-cli)
   * [JSON processor](#json-processor)
-  * [Azure Subscription Pre-requisite](#azure-subscription-pre-requisite)
   * [Git](#git)
   * [Azure Subscription Pre Requisite](#azure-subscription-pre-requisite)
   * [Inputs](#inputs)
