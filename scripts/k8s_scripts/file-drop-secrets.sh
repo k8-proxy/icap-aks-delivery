@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kubectl config use-context gw-icap-neu-file-drop-main
+kubectl config use-context gw-icap-aks-file-drop
 
 NAMESPACE01="icap-filedrop"
 NAMESPACE02="ingress-nginx"

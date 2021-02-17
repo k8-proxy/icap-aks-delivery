@@ -30,6 +30,8 @@ NAMESPACE01="icap-adaptation"
 NAMESPACE02="icap-ncfs"
 NAMESPACE03="icap-administration"
 
+kubectl config use-context gw-icap-aks-delivery-ukw
+
 # Create namespaces for deployment
 kubectl create ns $NAMESPACE01
 kubectl create ns $NAMESPACE02

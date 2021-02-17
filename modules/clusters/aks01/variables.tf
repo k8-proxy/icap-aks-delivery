@@ -107,7 +107,7 @@ variable "namespace03" {
 variable "chart_repo03" {
   description = "This is the path to the chart"
   type        = string
-  default 	  = "ingress-nginx/ingress-nginx"
+  default 	  = "./charts/icap-infrastructure/ingress-nginx"
 }
 
 ## Administration Chart
