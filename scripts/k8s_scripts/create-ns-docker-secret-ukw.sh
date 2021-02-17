@@ -5,6 +5,7 @@
 # Naming Variables
 RESOURCE_GROUP=$1
 VAULT_NAME=$2
+CLUSTER_NAME=$3
 
 # Secret Variables
 DOCKER_SERVER="https://index.docker.io/v1/"
@@ -29,6 +30,8 @@ SMTPSECURESOCKETOPTIONS=$(az keyvault secret show --name SmtpSecureSocketOptions
 NAMESPACE01="icap-adaptation"
 NAMESPACE02="icap-ncfs"
 NAMESPACE03="icap-administration"
+
+kubectl config use-context $CLUSTER_NAME
 
 # Create namespaces for deployment
 kubectl create ns $NAMESPACE01
