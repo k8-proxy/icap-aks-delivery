@@ -1,41 +1,39 @@
 # Instructions
-
+<!--
 ## Table of contents
 
 - [Instructions](#instructions)
-  - [Table of contents](#table-of-contents)
-  - [1. Pre-requisites](#1-pre-requisites)
-    - [1.1 Installation of Pre-requisites](#11-installation-of-pre-requisites)
-    - [Terraform install](#terraform-install)
-    - [Kubectl install](#kubectl-install)
-    - [Helm install](#helm-install)
-    - [Open SSL](#open-ssl)
-    - [Azure CLI](#azure-cli)
-    - [JSON processor](#json-processor)
-    - [GIT](#git)
-    - [Azure Subscription Pre Requisite](#azure-subscription-pre-requisite)
-    - [Inputs](#inputs)
-  - [2. Usage](#2-usage)
-    - [2.1 Clone Repo.](#21-clone-repo)
-    - [Pre-requisite healthcheck.](#pre-requisite-healthcheck)
-    - [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
-    - [2.3. Add required credentails.](#23-add-required-credentails)
-    - [2.4 Create azure initial setup](#24-create-azure-initial-setup)
-    - [2.5 Add Terraform Backend Key to Environment](#25-add-terraform-backend-key-to-environment)
-    - [2.6 Azure setup Healthcheck](#26-azure-setup-healthcheck)
-    - [2.7 Add Secrets to main KeyVault](#27-add-secrets-to-main-keyvault)
-    - [2.8 File Modifications](#28-file-modifications)
-    - [3 Creating SSL Certs](#3-creating-ssl-certs)
-      - [Self signed quick start](#self-signed-quick-start)
-      - [Customer Certificates](#customer-certificates)
-  - [4. Pre deployment](#4-pre-deployment)
-    - [ICAP Port customization](#icap-port-customization)
-  - [5. Deployment](#5-deployment)
-    - [5.1 Setup and Initialise Terraform](#51-setup-and-initialise-terraform)
-  - [6. Testing the solution.](#6-testing-the-solution)
-    - [6.1 Testing rebuild](#61-testing-rebuild)
-    - [7 Uninstall AKS-Solution](#7-uninstall-aks-solution)
-      - [**Only if you want to uninstall AKS solution completely from your system, then proceed**](#only-if-you-want-to-uninstall-aks-solution-completely-from-your-system-then-proceed)
+  * [1. Pre-requisites](#1-pre-requisites)
+    + [1.1 Installation of Pre-requisites](#11-installation-of-pre-requisites)
+    + [Terraform install](#terraform-install)
+    + [Kubectl install](#kubectl-install)
+    + [Open SSL](#open-ssl)
+    + [JSON processor (jq)](#json-processor)
+    + [Git install](#git-install)
+  * [2. Usage](#2-usage)
+    + [2.1 Clone Repo](#21-clone-repo)
+    + [2.2 Firstly make sure you are logged in and using the correct subscription.](#22-firstly-make-sure-you-are-logged-in-and-using-the-correct-subscription)
+    + [2.3 Create azure initial setup](#23-create-azure-initial-setup)
+    + [2.4 Create terraform service principal](#24-create-terraform-service-principal)
+    + [2.5 Add Secrets to main KeyVault](#25-add-secrets-to-main-keyvault)
+    + [2.6 Add Terraform Backend Key to Environment](#26-add-terraform-backend-key-to-environment)
+    + [2.7 File Modifications](#27-file-modifications)
+  * [3. Deployment](#3-deployment)
+    + [3.1 Setup and Initialise Terraform](#31-setup-and-initialise-terraform)
+    + [3.2 Switch Context](#32-switch-context)
+    + [3.3 Loading Secrets into key vault.](#33-loading-secrets-into-key-vault)
+    + [3.4 Creating SSL Certs](#34-creating-ssl-certs)
+    + [3.5 Create Namespaces and Secrets.](#35-create-namespaces-and-secrets)
+    + [3.6 Guide to Setup ArgoCD](#36-guide-to-setup-argocd)
+    + [3.7 Deploy Using ArgoCD](#37-deploy-using-argocd)
+  * [4. Sync an ArgoCD App](#4-sync-an-argocd-app)
+    + [4.1 Sync From CLI](#41-sync-from-cli)
+    + [4.2 Sync From UI](#42-sync-from-ui)
+  * [5. Testing the solution.](#5-testing-the-solution)
+    + [5.1 Healthcheck](#51-healthcheck)
+    + [5.2 Testing rebuild](#52-testing-rebuild)
+    + [6 Uninstall AKS-Solution.](#6-uninstall-aks-solution)
+-->
 
 ## 1. Pre-requisites
 - Terraform 
@@ -262,7 +260,6 @@ sudo cp jq /usr/bin
 # check version
 jq --version
 ```
-
 ### GIT
 
 **MacOS**
@@ -358,7 +355,8 @@ cp .env.example .env
 vim .env
 ```
 
-- Enter required values for all variables (REGION - any Azure region, RESOURCE_GROUP_NAME, STORAGE_ACCOUNT_NAME - accepts just small letters and numbers, CONTAINER_NAME, TAGS, VAULT_NAME, DH_SA_USERNAME, DH_SA_PASSWORD, SmtpUser, SmtpPass, token_username="policy-management") 
+- Enter required values for all variables (REGION - any Azure region, RESOURCE_GROUP_NAME, STORAGE_ACCOUNT_NAME - accepts just small letters and numbers, CONTAINER_NAME, TAGS, VAULT_NAME, DH_SA_USERNAME, DH_SA_PASSWORD, SmtpUser, SmtpPass, token_username="policy-management")
+
 - Run
 ```
 export $(xargs<.env)
@@ -388,7 +386,6 @@ export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --v
 ```
 echo $ARM_ACCESS_KEY
 ```
-- In case setup healthcheck returns any errors, fix them before proceeding
 
 ### 2.6 Azure setup Healthcheck 
 
@@ -396,6 +393,7 @@ echo $ARM_ACCESS_KEY
 ./scripts/healthchecks/azure_setup_healthcheck.sh
 
 ```
+- In case setup healthcheck returns any errors, fix them before proceeding
 
 ### 2.7 Add Secrets to main KeyVault 
 
@@ -409,6 +407,7 @@ echo $ARM_ACCESS_KEY
 
 - backend.tfvars - this will be used as azure backend to store deployment state. Run below script
 
+
 ```
 ./scripts/terraform-scripts/setup_backend_config.sh
 ```
@@ -419,6 +418,7 @@ echo $ARM_ACCESS_KEY
 vim terraform.tfvars
 
 # give a valid region name
+
 azure_region="UKWEST"
 
 # give a short suffix, maximum of 3 character.
@@ -437,7 +437,7 @@ suffix="stg"
 vim terraform.tfvars
 
 ```
-- Set flag `enable_cutomser_cert` as `false`. The self signed cdertificate will be generated and configured automatically during deployment.
+- Set flag `enable_customer_cert` as `false`. The self signed cdertificate will be generated and configured automatically during deployment.
 
 #### Customer Certificates
 
@@ -466,7 +466,7 @@ mkdir -p certs/file-drop-cert
 
 - Copy `management-ui certificates` to  `certs/mgmt-cert`
 
-- Set flag `enable_cutomser_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
+- Set flag `enable_customer_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
 
 ## 4. Pre deployment
 
@@ -486,21 +486,18 @@ Note : Please avoide port 80, 443 since this will be used for file-drop UI.
 - Run following:
 ```
 terraform init -backend-config="backend.tfvars" 
-
 ```
 - Run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
 ```
 terraform validate
 
-#Output should be: Success! The configuration is valid.
+#Success! The configuration is valid.
 ```
-
--Run
 ```
 terraform plan
 ```
+- Now you're ready to run apply and it should give you the following output
 
-- Now you're ready to run apply
 ``` 
 terraform apply 
 
@@ -510,8 +507,8 @@ Terraform will perform the actions described above.
 Only 'yes' will be accepted to approve.
 Enter a value: 
 Enter "yes"
-```
 
+```
 ## 6. Testing the solution.
 
 ### 6.1 Testing rebuild 
@@ -549,7 +546,8 @@ Run ICAP client locally
      kubectl config use-context  fd-clu-${suffix}
      kubectl get ingress -A
   ```
-     
+      
+
 2. Run:
 
         git clone https://github.com/k8-proxy/icap-client-docker.git
