@@ -46,8 +46,15 @@ variable "chart_path01" {
 variable "file_drop_dns_name_01" {
   description = "This is the DNS name for the ingress"
   type        = string
-  default     = "file-drop-ukw.ukwest.cloudapp.azure.com"
+  default     = "file-drop.ukwest.cloudapp.azure.com"
 }
+
+variable "a_record_02" {
+  description = "A record for File-Drop"
+  type = string
+  default = "file-drop"
+}
+
 
 ## Cert-Manager Chart
 variable "release_name02" {

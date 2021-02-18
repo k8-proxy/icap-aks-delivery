@@ -13,6 +13,7 @@ variable "resource_group" {
 variable "kv_name" {
   description = "The name of the key vault"
   type        = string
+  default  = "aks-delivery-keyvault-01"
 }
 
 variable "icap_dns" {
@@ -33,10 +34,10 @@ variable "file_drop_dns" {
   default     = "file-drop.ukwest.cloudapp.azure.com"
 }
 
-
-variable "enable_cutomser_cert" {
+variable "enable_customer_cert" {
     description = "The Azure backend storage account"
     type = bool
+    default = false
 }
 
 

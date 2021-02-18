@@ -28,7 +28,7 @@ resource "azurerm_kubernetes_cluster" "file-drop" {
   default_node_pool {
     name            = var.node_name
     node_count      = 1
-    vm_size         = "Standard_A4_v2"
+    vm_size         = "Standard_A2_v2"
     os_disk_size_gb = 40
   }
 
@@ -93,6 +93,11 @@ resource "helm_release" "ingress-nginx" {
   wait             = true
   cleanup_on_fail  = true
 
+  set {
+        name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-dns-label-name"
+        value = var.a_record_02
+    }
+
   depends_on = [ 
     azurerm_kubernetes_cluster.file-drop,
    ]
@@ -102,7 +107,7 @@ resource "null_resource" "get_kube_context" {
 
  provisioner "local-exec" {
 
-    command = "/bin/bash az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
+    command = "az aks get-credentials --resource-group ${var.resource_group} --name ${var.cluster_name} --overwrite-existing"
   }
   
   depends_on = [
