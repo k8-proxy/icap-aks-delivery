@@ -25,12 +25,11 @@ echo "container_name: $CONTAINER_NAME"
 echo "access_key: $ACCOUNT_KEY"
 echo "keyVault": $VAULT_NAME
 
-
-cat <<EOF >abc.txt
-
+unique=$(uuidgen)
+cat <<EOF >backend.tfvars
 resource_group_name=$RESOURCE_GROUP_NAME
 storage_account_name=$STORAGE_ACCOUNT_NAME"
 container_name=$CONTAINER_NAME
-key= "gw.delivery.terraform.tfstate"
+key= ${unique}."gw.delivery.terraform.tfstate"
 EOF
 
