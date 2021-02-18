@@ -264,8 +264,6 @@ sudo cp jq /usr/bin
 jq --version
 ```
 
-### Azure Subscription Pre-requisite
-=======
 ### GIT
 
 **MacOS**
@@ -411,17 +409,12 @@ echo $ARM_ACCESS_KEY
 
 ### 2.8 File Modifications
 
-- Currently below needs modifications
+- backend.tfvars - this will be used as azure backend to store deployment state. Run below script
 
-- backend.tfvars - this will be used as azure backend to store deployment state 
 ```
-resource_group_name  = "gw-icap-tfstate"
-storage_account_name = "tfstate263sam"
-container_name       = "gw-icap-tfstate"
-key = "aks.delivery.terraform.tfstate"
+./scripts/terraform-scripts/setup_backend_config.sh
+```
 
-Note : First 3 values should be same as export values in .env file of step 2.3 
-```
 - terraform.tfvars
 
 ```
@@ -525,26 +518,34 @@ Run ICAP client locally
 
 - Icap-server
 
-    Run below command and 
+    Run below command and switch to aks cluster by replacing `${suffix}` below
     ```
+     kubectl config get-contexts
+  
+     kubectl config use-context  aks-clu-${suffix}
      kubectl get service  --all-namespaces
+  
     ```
 
     - ICAP-server : EXTERNAL-IP of frontend-icap-lb 
+    - Management-ui : EXTERNAL-IP of ingress-nginx-controller
+    
+- Management-ui: 
+    ```
+    kubectl get ingress -A
+    
+    ```
     
 - File-Drop    
 
- Run below command and 
-    ```
-     kubectl get service  --all-namespaces
-    ```
-
-    - File-Drop  : EXTERNAL-IP of file-drop-lb   
-
-- Management-ui: 
-        ```
-        kubectl get ingress -A
-        ```
+     Run below command and switch to file-drop cluster by replacing `${suffix}` below
+  ```
+     kubectl config get-contexts
+  
+     kubectl config use-context  fd-clu-${suffix}
+     kubectl get ingress -A
+  ```
+     
 2. Run:
 
         git clone https://github.com/k8-proxy/icap-client-docker.git

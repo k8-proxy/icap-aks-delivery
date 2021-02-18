@@ -405,8 +405,6 @@ echo $ARM_ACCESS_KEY
 
 ### 2.8 File Modifications
 
-- Currently below needs modifications
-
 - backend.tfvars - this will be used as azure backend to store deployment state. Run below script
 
 ```
