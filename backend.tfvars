@@ -1,4 +1,4 @@
-resource_group_name  = "gw-icap-tfstate-p7"
-storage_account_name = "tfstate263p7"
-container_name       = "gw-icap-tfstate-p7"
-key                  = "sb8.delivery.terraform.tfstate"
+resource_group_name  = "gw-icap-tfstate"
+storage_account_name = "tfstate263samd1"
+container_name       = "gw-icap-tfstate"
+key                  = "gw.deliveryterraform.tfstate"
