@@ -442,7 +442,7 @@ suffix="stg"
 vim terraform.tfvars
 
 ```
-- Set flag `enable_cutomser_cert` as `false`. The self signed cdertificate will be generated and configured automatically during deployment.
+- Set flag `enable_customer_cert` as `false`. The self signed cdertificate will be generated and configured automatically during deployment.
 
 #### Customer Certificates
 
@@ -471,7 +471,7 @@ mkdir -p certs/file-drop-cert
 
 - Copy `management-ui certificates` to  `certs/mgmt-cert`
 
-- Set flag `enable_cutomser_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
+- Set flag `enable_customer_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
 
 ## 4. Pre deployment
 
@@ -522,26 +522,35 @@ Run ICAP client locally
 
 - Icap-server
 
-    Run below command and 
+    Run below command and switch to aks cluster by replacing `${suffix}` below
     ```
+     kubectl config get-contexts
+  
+     kubectl config use-context  aks-clu-${suffix}
      kubectl get service  --all-namespaces
+  
     ```
 
     - ICAP-server : EXTERNAL-IP of frontend-icap-lb 
+    - Management-ui : EXTERNAL-IP of ingress-nginx-controller
+    
+- Management-ui: 
+    ```
+    kubectl get ingress -A
+    
+    ```
     
 - File-Drop    
 
- Run below command and 
-    ```
-     kubectl get service  --all-namespaces
-    ```
+     Run below command and switch to file-drop cluster by replacing `${suffix}` below
+  ```
+     kubectl config get-contexts
+  
+     kubectl config use-context  fd-clu-${suffix}
+     kubectl get ingress -A
+  ```
+      
 
-    - File-Drop  : EXTERNAL-IP of file-drop-lb   
-
-- Management-ui: 
-        ```
-        kubectl get ingress -A
-        ```
 2. Run:
 
         git clone https://github.com/k8-proxy/icap-client-docker.git
