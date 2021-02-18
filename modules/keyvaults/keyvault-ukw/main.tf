@@ -120,7 +120,7 @@ resource "null_resource" "create_icap_certs" {
 }
 
 resource "null_resource" "create_mgmt_certs" {
- count = var.var.enable_customer_cert ? 0 : 1
+ count = var.enable_customer_cert ? 0 : 1
 
  provisioner "local-exec" {
 
@@ -134,7 +134,7 @@ resource "null_resource" "create_mgmt_certs" {
 
 resource "null_resource" "create_file_drop_certs" {
 
- count = var.var.enable_customer_cert ? 0 : 1
+ count = var.enable_customer_cert ? 0 : 1
 
  provisioner "local-exec" {
 
@@ -153,7 +153,7 @@ resource "null_resource" "load_secrets" {
     command = "/bin/bash ./scripts/az-secret-script/create-az-secret.sh ${var.kv_name}"
   }
 
-  depends_on = [ 
+  depends_on = [
     azurerm_key_vault.keyvault,
    ]
 }
