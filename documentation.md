@@ -442,7 +442,7 @@ suffix="stg"
 vim terraform.tfvars
 
 ```
-- Set flag `var.enable_customer_cert` as `false`. The self signed cdertificate will be generated and configured automatically during deployment.
+- Set flag `enable_customer_cert` as `false`. The self signed cdertificate will be generated and configured automatically during deployment.
 
 #### Customer Certificates
 
@@ -471,7 +471,7 @@ mkdir -p certs/file-drop-cert
 
 - Copy `management-ui certificates` to  `certs/mgmt-cert`
 
-- Set flag `var.enable_customer_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
+- Set flag `enable_customer_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
 
 ## 4. Pre deployment
 
