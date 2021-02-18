@@ -407,19 +407,10 @@ echo $ARM_ACCESS_KEY
 
 ### 2.8 File Modifications
 
-- Currently below needs modifications
 
-- Edit backend.tfvars - this will be used as azure backend to store deployment state 
+- Edit backend.tfvars running below script - this will be used as azure backend to store deployment state 
 ```
-vim backend.tfvars
-
-# Change below values
-resource_group_name  = "gw-icap-tfstate"
-storage_account_name = "tfstate263sam"
-container_name       = "gw-icap-tfstate"
-key = "aks.delivery.terraform.tfstate"
-
-Note : First 3 values should be same as export values in .env file of step 2.3 
+./scripts/terraform-scripts/setup_backend_config.sh
 ```
 - Edit terraform.tfvars
 
