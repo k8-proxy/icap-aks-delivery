@@ -339,9 +339,7 @@ git submodule update
 ```bash
 
 az login
-
 az account list --output table
-
 az account set -s <subscription ID>
 
 # Confirm you are on correct subscription
@@ -360,7 +358,8 @@ cp .env.example .env
 vim .env
 ```
 
-- Edit all the required details. 
+- Enter required values for all variables (REGION - any Azure region, RESOURCE_GROUP_NAME, STORAGE_ACCOUNT_NAME - accepts just small letters and numbers, CONTAINER_NAME, TAGS, VAULT_NAME, DH_SA_USERNAME, DH_SA_PASSWORD, SmtpUser, SmtpPass, token_username="policy-management")
+
 - Run
 ```
 export $(xargs<.env)
@@ -376,17 +375,17 @@ export $(xargs<.env)
 
 ### 2.5 Add Terraform Backend Key to Environment
 
-- Check you have access to keyvault using below command
+- Check if you have access to keyvault using below command where $VAULT_NAME is output value from step 2.4
 ```
 az keyvault secret show --name terraform-backend-key --vault-name $VAULT_NAME --query value -o tsv
 ```
-- Next export the environment variable "ARM_ACCESS_KEY" to be able to initialise terraform
+- Export the environment variable "ARM_ACCESS_KEY" to be able to initialise terraform
 
 ```
 export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --vault-name $VAULT_NAME --query value -o tsv)
 ```
  
-- Now check to see if you can access it through variable
+- Check if you can access ARM_ACCESS_KEY as variable
 ```
 echo $ARM_ACCESS_KEY
 ```
@@ -397,6 +396,7 @@ echo $ARM_ACCESS_KEY
 ./scripts/healthchecks/azure_setup_healthcheck.sh
 
 ```
+- In case setup healthcheck returns any errors, fix them before proceeding
 
 ### 2.7 Add Secrets to main KeyVault 
 
@@ -410,8 +410,11 @@ echo $ARM_ACCESS_KEY
 
 - Currently below needs modifications
 
-- backend.tfvars - this will be used as azure backend to store deployment state 
+- Edit backend.tfvars - this will be used as azure backend to store deployment state 
 ```
+vim backend.tfvars
+
+# Change below values
 resource_group_name  = "gw-icap-tfstate"
 storage_account_name = "tfstate263sam"
 container_name       = "gw-icap-tfstate"
@@ -419,9 +422,11 @@ key = "aks.delivery.terraform.tfstate"
 
 Note : First 3 values should be same as export values in .env file of step 2.3 
 ```
-- terraform.tfvars
+- Edit terraform.tfvars
 
 ```
+vim terraform.tfvars
+
 # give a valid region name
 
 azure_region="UKWEST"
@@ -488,23 +493,25 @@ Note : Please avoide port 80, 443 since this will be used for file-drop UI.
 ## 5. Deployment
 ### 5.1 Setup and Initialise Terraform
 
-- Next you'll need to use the following:
+- Run following:
 ```
 terraform init -backend-config="backend.tfvars" 
-
 ```
-- Next run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
+- Run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
 ```
 terraform validate
-#Success! The configuration is valid.
-
+#Output should be: Success! The configuration is valid.
+```
+- Run:
+```
 terraform plan
 ```
 
-- Now you're ready to run apply and it should give you the following output
+- Now you're ready to run apply
 ``` 
 terraform apply 
 
+# You will get below output. Make sure to enter YES when prompt
 Do you want to perform these actions?
 Terraform will perform the actions described above.
 Only 'yes' will be accepted to approve.
