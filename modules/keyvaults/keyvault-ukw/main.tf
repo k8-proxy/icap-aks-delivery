@@ -120,7 +120,7 @@ resource "null_resource" "create_icap_certs" {
 }
 
 resource "null_resource" "create_mgmt_certs" {
- count = var.enable_cutomser_cert ? 0 : 1
+ count = var.var.enable_customer_cert ? 0 : 1
 
  provisioner "local-exec" {
 
@@ -134,7 +134,7 @@ resource "null_resource" "create_mgmt_certs" {
 
 resource "null_resource" "create_file_drop_certs" {
 
- count = var.enable_cutomser_cert ? 0 : 1
+ count = var.var.enable_customer_cert ? 0 : 1
 
  provisioner "local-exec" {
 
@@ -154,9 +154,6 @@ resource "null_resource" "load_secrets" {
   }
 
   depends_on = [ 
-    null_resource.create_mgmt_certs,
-    null_resource.create_icap_certs,
-    null_resource.create_file_drop_certs,
     azurerm_key_vault.keyvault,
    ]
 }
