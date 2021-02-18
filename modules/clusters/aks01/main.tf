@@ -28,7 +28,7 @@ resource "azurerm_kubernetes_cluster" "icap-deploy" {
   default_node_pool {
     name            = var.node_name
     node_count      = 4
-    vm_size         = "Standard_DS4_v2"
+    vm_size         = "Standard_DS3_v2"
     os_disk_size_gb = 100
 
     enable_auto_scaling = true
