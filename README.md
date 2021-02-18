@@ -1,8 +1,9 @@
 # Instructions
-<!--
+
 ## Table of contents
 
 - [Instructions](#instructions)
+  - [Table of contents](#table-of-contents)
   - [1. Pre-requisites](#1-pre-requisites)
     - [1.1 Installation of Pre-requisites](#11-installation-of-pre-requisites)
     - [Terraform install](#terraform-install)
@@ -36,7 +37,6 @@
     - [6.1 Testing rebuild](#61-testing-rebuild)
     - [7 Uninstall AKS-Solution](#7-uninstall-aks-solution)
       - [**Only if you want to uninstall AKS solution completely from your system, then proceed**](#only-if-you-want-to-uninstall-aks-solution-completely-from-your-system-then-proceed)
--->
 
 ## 1. Pre-requisites
 - Terraform 
