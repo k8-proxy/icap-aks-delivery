@@ -260,9 +260,6 @@ sudo cp jq /usr/bin
 # check version
 jq --version
 ```
-
-### Azure Subscription Pre-requisite
-=======
 ### GIT
 
 **MacOS**
@@ -408,21 +405,14 @@ echo $ARM_ACCESS_KEY
 
 ### 2.8 File Modifications
 
-- Currently below needs modifications
+- backend.tfvars - this will be used as azure backend to store deployment state. Run below script
 
-- Edit backend.tfvars - this will be used as azure backend to store deployment state 
+
 ```
-vim backend.tfvars
-
-# Change below values
-resource_group_name  = "gw-icap-tfstate"
-storage_account_name = "tfstate263sam"
-container_name       = "gw-icap-tfstate"
-key = "aks.delivery.terraform.tfstate"
-
-Note : First 3 values should be same as export values in .env file of step 2.3 
+./scripts/terraform-scripts/setup_backend_config.sh
 ```
-- Edit terraform.tfvars
+
+- terraform.tfvars
 
 ```
 vim terraform.tfvars
@@ -500,14 +490,14 @@ terraform init -backend-config="backend.tfvars"
 - Run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
 ```
 terraform validate
-#Output should be: Success! The configuration is valid.
+
+#Success! The configuration is valid.
 ```
-- Run:
 ```
 terraform plan
 ```
+- Now you're ready to run apply and it should give you the following output
 
-- Now you're ready to run apply
 ``` 
 terraform apply 
 
@@ -517,8 +507,8 @@ Terraform will perform the actions described above.
 Only 'yes' will be accepted to approve.
 Enter a value: 
 Enter "yes"
-```
 
+```
 ## 6. Testing the solution.
 
 ### 6.1 Testing rebuild 
