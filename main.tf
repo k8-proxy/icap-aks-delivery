@@ -17,6 +17,8 @@ module "create_aks_cluster_UKWest" {
 	icap_tlsport              =   "${var.icap_tlsport}"
 	dns_name_01               =   "icap-${var.suffix}"
 	dns_name_04               =   "management-ui-${var.suffix}.${var.domain}"
+	a_record_01				  =   "management-ui-${var.suffix}"
+
 
 	kv_vault_name            =    "aks-kv-${var.suffix}"
 	storage_resource         =    "aks-storage-${var.suffix}"
@@ -30,7 +32,7 @@ module "create_aks_cluster_file_drop_UKWest" {
 	region                    =   "${var.azure_region}"
 	cluster_name              =   "fd-clu-${var.suffix}"
 	file_drop_dns_name_01     =   "file-drop-${var.suffix}.${var.domain}"
-
+	a_record_02				  =   "file-drop-${var.suffix}"
 }
 
 # Storage Account Modules
@@ -52,6 +54,6 @@ module "create_key_vault_UKWest" {
 	mgmt_dns                  =   "management-ui-${var.suffix}.${var.domain}"
 	file_drop_dns             =   "file-drop-${var.suffix}.${var.domain}"
 
-	enable_cutomser_cert     =   "${var.enable_cutomser_cert}"
+	enable_customer_cert     =   "${var.enable_customer_cert}"
 
 }
