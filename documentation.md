@@ -535,23 +535,20 @@ Run ICAP client locally
     - Management-ui : EXTERNAL-IP of ingress-nginx-controller
     
 - Management-ui: 
-        ```
-        kubectl get ingress -A
-        
-        ```
+    ```
+    kubectl get ingress -A
+    
+    ```
     
 - File-Drop    
 
- Run below command and 
-    Run below command and switch to file-drop cluster by replacing `${suffix}` below
-    
-    ```
+ Run below command and switch to file-drop cluster by replacing `${suffix}` below
+  ```
      kubectl config get-contexts
   
      kubectl config use-context  fd-clu-${suffix}
      kubectl get ingress -A
-  
-    ```
+  ```
    - File-Drop  : EXTERNAL-IP of file-drop-lb   
 
 2. Run:
