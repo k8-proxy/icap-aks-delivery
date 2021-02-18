@@ -349,10 +349,17 @@ az account show
 
 ```
 cp .env.example .env
+
 vim .env
 ```
 
-- Edit all the required details and then run
+- Enter required values for all variables in the same format as default value
+```
+(REGION - any Azure region
+RESOURCE_GROUP_NAME, STORAGE_ACCOUNT_NAME - accepts just small letters and numbers,
+CONTAINER_NAME, TAGS, VAULT_NAME, DH_SA_USERNAME, DH_SA_PASSWORD, SmtpUser, SmtpPass, token_username="policy-management")
+```
+- Run
 ```
 export $(xargs<.env)
 ```
@@ -367,17 +374,17 @@ export $(xargs<.env)
 
 ### 2.5 Add Terraform Backend Key to Environment
 
-- Check you have access to keyvault using below command
+- Check if you have access to keyvault using below command
 ```
 az keyvault secret show --name terraform-backend-key --vault-name $VAULT_NAME --query value -o tsv
 ```
-- Next export the environment variable "ARM_ACCESS_KEY" to be able to initialise terraform
+- Export the environment variable "ARM_ACCESS_KEY" to be able to initialise terraform
 
 ```
 export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --vault-name $VAULT_NAME --query value -o tsv)
 ```
  
-- Now check to see if you can access it through variable
+- Check if you can access it through variable
 ```
 echo $ARM_ACCESS_KEY
 ```
@@ -396,13 +403,17 @@ echo $ARM_ACCESS_KEY
 ```
 ./scripts/terraform-scripts/load_keyvault_secrets.sh
 ```
+- In case setup healthcheck returns any errors, fix them before proceeding
 
 ### 2.8 File Modifications
 
 - Currently below needs modifications
 
-- backend.tfvars - this will be used as azure backend to store deployment state 
+- Edit backend.tfvars - this will be used as azure backend to store deployment state 
 ```
+vim backend.tfvars
+
+# Change below values
 resource_group_name  = "gw-icap-tfstate"
 storage_account_name = "tfstate263sam"
 container_name       = "gw-icap-tfstate"
@@ -410,11 +421,12 @@ key = "aks.delivery.terraform.tfstate"
 
 Note : First 3 values should be same as export values in .env file of step 2.3 
 ```
-- terraform.tfvars
+- Edit terraform.tfvars
 
 ```
-# give a valid region name
+vim terraform.tfvars
 
+# give a valid region name
 azure_region="UKWEST"
 
 # give a short suffix, maximum of 3 character.
