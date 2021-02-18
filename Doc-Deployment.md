@@ -22,28 +22,30 @@ Note : Please avoide port 80, 443 since this will be used for file-drop UI.
     
 ## 2 Setup and Initialise Terraform
 
-- Next you'll need to use the following:
+- Run the following:
 ```
 terraform init -backend-config="backend.tfvars" 
 
 ```
-- Next run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
+- Run terraform validate/refresh to check for changes within the state, and also to make sure there aren't any issues.
 ```
 terraform validate
-#Success! The configuration is valid.
-
+#Output shoule be: Success! The configuration is valid.
+```
+- Run
+```
 terraform plan
 ```
 
-- Now you're ready to run apply and it should give you the following output
+- Now you're ready to run apply
 ``` 
 terraform apply 
 
+#When prompted below output enter "yes"
 Do you want to perform these actions?
 Terraform will perform the actions described above.
 Only 'yes' will be accepted to approve.
 Enter a value: 
-Enter "yes"
 ```
 
 ## 3. Testing the solution.
