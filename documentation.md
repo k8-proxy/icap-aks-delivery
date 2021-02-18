@@ -543,12 +543,12 @@ Run ICAP client locally
 - File-Drop    
 
      Run below command and switch to file-drop cluster by replacing `${suffix}` below
-      ```
-         kubectl config get-contexts
-      
-         kubectl config use-context  fd-clu-${suffix}
-         kubectl get ingress -A
-      ```
+  ```
+     kubectl config get-contexts
+  
+     kubectl config use-context  fd-clu-${suffix}
+     kubectl get ingress -A
+  ```
       
 
 2. Run:
