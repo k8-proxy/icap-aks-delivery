@@ -23,7 +23,7 @@ variable "icap_tlsport" {
     type = number
 }
 
-variable "enable_cutomser_cert" {
+variable "var.enable_customer_cert" {
     description = "The Azure backend storage account"
     type = bool
     default = false

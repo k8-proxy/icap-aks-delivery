@@ -34,10 +34,10 @@ variable "file_drop_dns" {
   default     = "file-drop.ukwest.cloudapp.azure.com"
 }
 
-
-variable "enable_cutomser_cert" {
+variable "var.enable_customer_cert" {
     description = "The Azure backend storage account"
     type = bool
+    default = false
 }
 
 
