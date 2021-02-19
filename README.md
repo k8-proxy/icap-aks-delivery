@@ -330,7 +330,7 @@ git submodule update
 ### Pre-requisite healthcheck.
 
 ```
-./scripts/healthchecks/pre_requisite_healtcheck.sh
+./scripts/healthchecks/pre_requisite_healthcheck.sh
 
 ```
    
