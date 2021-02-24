@@ -124,6 +124,5 @@ Enter a value:
 #When prompt enter: yes
 ```
 
-- To verify everything is destroyed run `./scripts/healthchecks/azure_setup_healthcheck.sh` and script should fail
-
+- To verify everything is destroyed run `./scripts/healthchecks/azure_setup_healthcheck.sh` and you should get error that container and account key are not present
 [Go to top](#Deployment-of-AKS)
