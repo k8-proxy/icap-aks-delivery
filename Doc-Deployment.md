@@ -34,75 +34,96 @@ Only 'yes' will be accepted to approve.
 Enter a value: 
 ```
 
-## 6. Testing the solution.
+## 2 Testing the solution.
 
-### 6.1 Testing rebuild 
+1. Find DNS/IP of the ICAP-Server, Management-UI and File-Drop
 
-Run ICAP client locally
+- ICAP-server
 
-1. Find DNS of the ICAP-Server and Management UI
-
-- Icap-server
-
-    Run below command and switch to aks cluster by replacing `${suffix}` below
+    Run below command and switch to aks cluster by replacing `${suffix}` with the value you specified for suffix in terraform.tfvars
     ```
-     kubectl config get-contexts
-  
-     kubectl config use-context  aks-clu-${suffix}
-     kubectl get service  --all-namespaces
+    kubectl config get-contexts  
+    kubectl config use-context  aks-clu-${suffix}
+    kubectl get service  --all-namespaces
   
     ```
-
-    - ICAP-server : EXTERNAL-IP of frontend-icap-lb 
-    - Management-ui : EXTERNAL-IP of ingress-nginx-controller
+    - ICAP-server EXTERNAL-IP is the IP under `frontend-icap-lb` namespace (second column)
     
-- Management-ui: 
+- Management-UI: 
+    - Management-ui EXTERNAL-IP is the IP under `ingress-nginx-controller` namespace (second column), results or running `kubectl get service  --all-namespaces`
+    - Management-ui hostaname can be seen when running:
+     
     ```
     kubectl get ingress -A
-    
     ```
-    
-- File-Drop    
+    - Use hostname in your browser to access management-ui
 
-     Run below command and switch to file-drop cluster by replacing `${suffix}` below
-  ```
-     kubectl config get-contexts
+![image](https://user-images.githubusercontent.com/70108899/109070073-55e27600-76f2-11eb-84ad-f6b2379b781f.png)
   
-     kubectl config use-context  fd-clu-${suffix}
-     kubectl get ingress -A
+  
+- File-Drop
+
+     Run below command and switch to file-drop cluster by replacing `${suffix}` with the value you specified for suffix in terraform.tfvars
   ```
-      
+  kubectl config get-contexts
+  kubectl config use-context  fd-clu-${suffix}
+  kubectl get ingress -A
+  ```
+  
+    - File-Drop hostname can be used in browser for accessing File-Drop
 
-2. Run:
+![image](https://user-images.githubusercontent.com/70108899/109070170-73afdb00-76f2-11eb-8427-eed0084d33d5.png)
+    
+    
+2. Install and run ICAP client localy to verify ICAP-Server LB is working as expected
 
-        git clone https://github.com/k8-proxy/icap-client-docker.git
-    
-3. Run: 
+   2.1 Install Docker
+   
+   MacOS
+   - From Docker Hub download Docker Desktop for Mac https://hub.docker.com/editions/community/docker-ce-desktop-mac/ and follow the instructions
+   
+   Windows
+   - From Docker Hub download Docker Desktop for WIN https://hub.docker.com/editions/community/docker-ce-desktop-windows and follow the instructions
+   
+   Linux
+   - Copy and paste the following commands
+   ```
+   sudo yum install -y yum-utils
+   sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+   sudo yum install docker-ce docker-ce-cli containerd.io --allowerasing
+   sudo systemctl start docker
+   ```
 
-        cd icap-client-docker/
-        sudo docker build -t c-icap-client .
-    
-4. Run: 
-       
-        ./icap-client.sh {IP of frontend-icap-lb} JS_Siemens.pdf
-        
-        (check Respond Headers: HTTP/1.0 200 OK to verify rebuild is successful)
-    
-5. Run: 
+   2.2 Install ICAP client 
+   ```
+   git clone https://github.com/k8-proxy/icap-client-docker.git
+   cd icap-client-docker/
+   sudo docker build -t c-icap-client .
+   ```
+   
+   2.3 Run ICAP client by processing the file
+   
+   ```
+   ./icap-client.sh {IP of frontend-icap-lb} JS_Siemens.pdf
+   #(check Respond Headers: HTTP/1.0 200 OK to verify rebuild is successful)
+   ```
+   
+   - Open rebuilt/rebuilt-file.pdf (in your OS, not via console) and notice "Glasswall Proccessed" watermark on the right hand side of the page)
+   - Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
+   - Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt)`) and compare the differences
 
-        open rebuilt/rebuilt-file.pdf  
-    
-       (and notice "Glasswall Proccessed" watermark on the right hand side of the page)
-    
-6. Open original `./JS_Siemens.pdf` file in Adobe reader and notice the Javascript and the embedded file 
-7. Open `https://file-drop.co.uk/` or `https://glasswall-desktop.com/` and drop both files (`./JS_Siemens.pdf ( original )` and `rebuilt/rebuilt-file.pdf (rebuilt) `) and compare the differences
+
 ### 3 Uninstall AKS-Solution
 
 #### **Only if you want to uninstall AKS solution completely from your system, then proceed**
 
-- Run below script to destroy all cluster ,resources, keyvaults,storage containers and service principal.
+- From `icap-aks-delivery` folder run below script to destroy all clusters, resources, keyvaults, storage containers and service principal.
 
 ```
 ./scripts/terraform-scripts/uninstall_icap_aks_setup.sh
+#When prompt enter: yes
 ```
+
+- To verify everything is destroyed run `./scripts/healthchecks/azure_setup_healthcheck.sh` and script should fail
+
 [Go to top](#Deployment-of-AKS)
