@@ -23,7 +23,7 @@
 - [3 Creating SSL Certs](#3-creating-ssl-certs)
     + [Self signed quick start](#self-signed-quick-start)
     + [Customer Certificates](#customer-certificates)
-
+- [4 Pre-deployment](#4-pre-deployment)
 ## 1. Pre-requisites
 - Terraform 
 - Kubectl
@@ -467,5 +467,16 @@ mkdir -p certs/file-drop-cert
 
 - Set flag `enable_cutomser_cert` to `true` in `terraform.tfvars` which takes above certificate during deployment
 
+## 4. Pre deployment
+
+### ICAP Port customization
+- By default icap-server will run on port 1344 for SSL and 1345 for TLS
+- If you want to customize the above port, please follow below procedure
+```
+vim terraform.tfvars
+```
+- Edit variables `icap_port` and `icap_tlsport` according to requirement and Save it.
+
+Note : Please avoide port 80, 443 since this will be used for file-drop UI.
 
 [Go to top](#installation-and-setting-up-the-environment)
