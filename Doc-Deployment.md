@@ -1,5 +1,5 @@
 #  Deployment of AKS
-## If you haven't installed the pre-requisites and set up the environment, please follow steps [here](https://github.com/k8-proxy/icap-aks-delivery/blob/main/Doc-Install%26Usage.md)
+### If you haven't installed the pre-requisites and set up the environment, please follow steps [here](https://github.com/k8-proxy/icap-aks-delivery/blob/main/Doc-Install%26Usage.md)
 - [1. Setup and Initialise Terraform](#2-setup-and-initialise-terraform)
 - [2. Testing the solution.](#3-testing-the-solution)
   * [2.1 Testing rebuild](#31-testing-rebuild)
