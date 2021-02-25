@@ -50,7 +50,10 @@ Enter a value:
     - ICAP-server EXTERNAL-IP is the IP under `frontend-icap-lb` namespace (second column)
     
 - Management-UI: 
-    - Management-ui EXTERNAL-IP is the IP under `ingress-nginx-controller` namespace (second column), results or running `kubectl get service  --all-namespaces`
+    - Management-ui EXTERNAL-IP is the IP under `ingress-nginx-controller` namespace (second column), results on running 
+    ```
+     kubectl get service  --all-namespaces
+     ```
     - Management-ui hostaname can be seen when running:
      
     ```
