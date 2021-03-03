@@ -521,29 +521,7 @@ cd /script/push-images/
 
 This will then kick start the process off uploading the images to the newly created keyvault. This can take up to an hour to complete (depending on your upload speed) and whilst it is completing we can move onto the next section.
 
-### 4.2 Adding the registry to values
-
-This section we will cover adding the newly created Azure Container Registry details to the ```values.yaml```. Within each Helm chart there is a ```values.yaml``` file and inside there is an value called ```imagestore:```. Each of these values point to the images need to create each of the individual Icap Services. 
-
-So in order to make sure we are adding the correct registry into the ```values.yaml`` we need to run the following script followed by the full URL for the Azure Container Registry:
-
-Firstly
-```
-cp ./scripts/k8_scripts/update-registry-values.sh ./charts/icap-infrastructure
-```
-Then
-```
-cd ./charts/icap-infrastructure
-```
-Now run the script
-```
-./update-registry-values.sh $CONTAINER_REGISTRY_NAME.azurecr.io/
-```
-***It's important you do not forget the ```/``` off the end of the registry name, as this will cause issues pulling the image from the ACR***
-
-All of the registry values with in ```values.yaml``` will have been updated to the ACR we created earlier in the steps.
-
-### 4.3 ICAP Port customization
+### 4.2 ICAP Port customization
 - By default icap-server will run on port 1344 for SSL and 1345 for TLS
 - If you want to customize the above port, please follow below procedure
 ```
