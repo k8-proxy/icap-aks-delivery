@@ -8,7 +8,7 @@ VAULT_NAME=$2
 CLUSTER_NAME=$3
 
 # Secret Variables
-DOCKER_SERVER="https://index.docker.io/v1/"
+DOCKER_SERVER="$CONTAINER_REGISTRY_NAME.azurecr.io"
 USER_EMAIL="mpigram@glasswallsolutions.com"
 DOCKER_USERNAME=$(az keyvault secret show --name DH-SA-USERNAME --vault-name $VAULT_NAME --query value -o tsv)
 DOCKER_PASSWORD=$(az keyvault secret show --name DH-SA-password --vault-name $VAULT_NAME --query value -o tsv)
